@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        uniform mat4 uPMatrix;
+        uniform mat4 uMVMatrix;
+        uniform bool uPerVertexColor;
+        uniform vec4 uColor;
+        attribute vec3 aVertexPosition;
+        attribute vec4 aVertexColor;
+        varying vec4 fColor;
+
+        void main() { 
+            gl_Position = uPMatrix * uMVMatrix  * vec4(aVertexPosition,1.0);
+            if(uPerVertexColor){
+                fColor = aVertexColor;
+            } else {
+                fColor = uColor;
+            }
+        }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float; 
+        varying vec4 fColor; 
+        void main() { 
+            gl_FragColor = fColor; 
+        }
+    </script>
+
+    <script type="text/javascript" src="./common/webgl-utils.js"></script>
+    <script type="text/javascript" src="./common/initShaders.js"></script>
+    <script type="text/javascript" src="./common/MV.js"></script>
+    <script type="text/javascript" src="./Camera.js"></script>
+    <script type="text/javascript" src="./CameraInteractor.js"></script>
+    <script type="text/javascript" src="./Floor.js"></script>
+    <script type="text/javascript" src="./Scene.js"></script>
+    <script type="text/javascript" src="./App.js"></script>
+    <script type="text/javascript" src="./Main.js"></script>
+</head>
+
+<body>
+    <canvas id="gl-canvas" width="480" height="400">
+        Oops ... your browser doesn't support the HTML5 canvas element
+    </canvas>
+</body>
+
+</html>
