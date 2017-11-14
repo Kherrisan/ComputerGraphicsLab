@@ -10,6 +10,7 @@ var viewportHeight = 0;
 var scene = null;
 
 var uMVMatrix = null;
+var uTMatrix = null;
 var uPMatrix = null;
 var aVertexColor = null;
 var aVertexPosition = null;
@@ -37,13 +38,17 @@ function draw() {
     gl.uniform1i(uPerVertexColor, object.perVertexColor);
     gl.uniform4fv(uColor, object.color);
 
-    
-
-    // gl.disableVertexAttribArray(aVertexColor);
+    gl.disableVertexAttribArray(aVertexColor);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, object.vbo);
     gl.vertexAttribPointer(aVertexPosition, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(aVertexPosition);
+
+    if (object.tMatrix) {
+      gl.uniformMatrix4fv(uTMatrix, false, flatten(object.tMatrix));
+    } else {
+      gl.uniformMatrix4fv(uTMatrix, false, flatten(mat4()));
+    }
 
     if (object.perVertexColor) {
       gl.bindBuffer(gl.ARRAY_BUFFER, object.cbo);
@@ -95,22 +100,45 @@ function load() {
   interactor = new CameraInteractor(camera, canvas);
 
   uMVMatrix = gl.getUniformLocation(program, "uMVMatrix");
+  uTMatrix = gl.getUniformLocation(program, "uTMatrix");
   uPMatrix = gl.getUniformLocation(program, "uPMatrix");
   uPerVertexColor = gl.getUniformLocation(program, "uPerVertexColor");
   uColor = gl.getUniformLocation(program, "uColor");
 
   Floor.build(40, 20);
   Scene.addObject(Floor);
+  Cube.build();
+  Scene.addObject(Cube);
+
+  document.getElementById("RotateLeft").onclick = function() {
+    Cube.rotateLeft();
+    draw();
+  };
+  document.getElementById("RotateRight").onclick = function() {
+    Cube.rotateRight();
+    draw();
+  };
+  document.getElementById("Forward").onclick = function() {
+    Cube.walkForward();
+    draw();
+  };
+  document.getElementById("Backward").onclick = function() {
+    Cube.walkBackward();
+    draw();
+  };
+  document.getElementById("Shrink").onclick = function() {
+    Cube.shrink();
+    draw();
+  };
+  document.getElementById("Expand").onclick = function() {
+    Cube.expand();
+    draw();
+  };
 }
 
 function initTransform() {
   modelViewMatrix = camera.getViewTransform();
-  perspectiveMatrix = perspective(
-    50,
-    viewportWidth / viewportHeight,
-    1,
-    1000
-  );
+  perspectiveMatrix = perspective(50, viewportWidth / viewportHeight, 1, 1000);
 }
 
 function updateMatrixUniforms() {

@@ -29,22 +29,3 @@ var Scene = {
     Scene.objects.push(object);
   }
 };
-
-function moveforward(object){
-    mult()
-}
-
-var LeftLeg={
-    vertexs:[],
-    indeces:[],
-    moveForward:function(){
-
-    }
-}
-
-var Cat1={
-    walkForward:function(){
-        LeftLeg.moveForward
-
-    }
-}

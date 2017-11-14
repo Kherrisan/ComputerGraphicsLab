@@ -1,4 +1,5 @@
 var Floor = {
+  Changable: false,
   lines: 50,
   halfWidth: 50,
   wireframe: true,

@@ -6,6 +6,7 @@
     <script id="vertex-shader" type="x-shader/x-vertex">
         uniform mat4 uPMatrix;
         uniform mat4 uMVMatrix;
+        uniform mat4 uTMatrix;
         uniform bool uPerVertexColor;
         uniform vec4 uColor;
         attribute vec3 aVertexPosition;
@@ -13,7 +14,7 @@
         varying vec4 fColor;
 
         void main() { 
-            gl_Position = uPMatrix * uMVMatrix  * vec4(aVertexPosition,1.0);
+            gl_Position = uPMatrix * uMVMatrix  * uTMatrix * vec4(aVertexPosition,1.0);
             if(uPerVertexColor){
                 fColor = aVertexColor;
             } else {
@@ -35,7 +36,8 @@
     <script type="text/javascript" src="./common/MV.js"></script>
     <script type="text/javascript" src="./Camera.js"></script>
     <script type="text/javascript" src="./CameraInteractor.js"></script>
-    <script type="text/javascript" src="./Floor.js"></script>
+    <script type="text/javascript" src="./Floor.js"></script>   
+    <script type="text/javascript" src="./Cube.js"></script> 
     <script type="text/javascript" src="./Scene.js"></script>
     <script type="text/javascript" src="./App.js"></script>
     <script type="text/javascript" src="./Main.js"></script>
@@ -45,6 +47,14 @@
     <canvas id="gl-canvas" width="480" height="400">
         Oops ... your browser doesn't support the HTML5 canvas element
     </canvas>
+
+
+    <button id= "RotateLeft">Left Rotate </button>
+    <button id= "RotateRight">Right Rotate</button>
+    <button id= "Forward">Forward</button>
+    <button id= "Backward">Backwad</button>
+    <button id= "Shrink">Shrink</button>
+    <button id= "Expand">Expand</button>
 </body>
 
 </html>

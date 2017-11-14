@@ -15,7 +15,7 @@ function _argumentsToArray( args )
 }
 
 //----------------------------------------------------------------------------
-
+// 
 function radians( degrees ) {
     return degrees * Math.PI / 180.0;
 }
@@ -278,12 +278,12 @@ function mult( u, v )
 
     if ( u.matrix && v.matrix ) {
         if ( u.length != v.length ) {
-            throw "mult(): trying to add matrices of different dimensions";
+            throw "mult(): trying to mult matrices of different dimensions";
         }
 
         for ( var i = 0; i < u.length; ++i ) {
             if ( u[i].length != v[i].length ) {
-                throw "mult(): trying to add matrices of different dimensions";
+                throw "mult(): trying to mult matrices of different dimensions";
             }
         }
 
