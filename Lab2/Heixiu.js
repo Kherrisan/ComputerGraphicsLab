@@ -1,17 +1,21 @@
 var Heixiu = {
   FORWARD_STEP: 0.5,
   ROTATE_STEP: 5,
-  RESIZE_STEP: 0.2,
+  RESIZE_STEP: 0.1,
   perVertexColor: true,
   directDraw: true, //indicate that this object have drawing method directly invoked by Main.js,unlike the Scene object.
   rotateAngle: 0, //the angle around axis Y,start from positive x-axis.
-  position: vec3(5, 0, -5), //the location of the center point of this animal.
-  size: 0.5, //expand and shrink factor.
+  position: vec3(3, 1, -3), //the location of the center point of this animal.
+  size: 0.2, //expand and shrink factor.
   bodyMatrix: mat4(), //indicate the relative position and guesture of body to the origin point of Heixiu.
 
   generateTransformMatrix: function() {
     var RE = scalem(Heixiu.size, Heixiu.size, Heixiu.size);
-    var T = translate(Heixiu.position[0], 0.0, Heixiu.position[2]);
+    var T = translate(
+      Heixiu.position[0],
+      Heixiu.position[1],
+      Heixiu.position[2]
+    );
     var R = rotateY(Heixiu.rotateAngle);
     return mult(T, mult(R, RE));
   },
@@ -35,7 +39,7 @@ var Heixiu = {
     draw_ellipsoid(shape_data, mult(tMatrix, Heixiu.bodyMatrix)); //draw the body.
 
     shape_data.axis_length = vec2(Heixiu.size * 1.5, Heixiu.size * 1.5);
-    shape_data.angle_range_vertical = vec3(0, 2, 0);
+    shape_data.angle_range_vertical = vec3(0, 2 * Heixiu.size + 0.5, 0);
     draw_taper(shape_data, mult(tMatrix, leftEarMatrix)); //draw left ear.
 
     draw_taper(shape_data, mult(tMatrix, rightEarMatrix)); //draw right ear.
