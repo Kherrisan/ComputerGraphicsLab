@@ -76,7 +76,7 @@ function draw_cylinder(shape_data, rotate_mat) {
     shape_data["origin"],
     shape_data["axis_length"],
     shape_data["height"],
-    shape_data["angle_range"]
+    shape_data["angle_range_horizontal"]
   );
   var colors = generateColors(ellipse_vertices.length, shape_data["color"]);
   renderPoints(ellipse_vertices, colors, rotate_mat);
