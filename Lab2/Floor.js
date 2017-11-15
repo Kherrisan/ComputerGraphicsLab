@@ -7,7 +7,7 @@ var Floor = {
   indices: [],
   color: [0.7, 0.7, 0.7, 1],
   perVertexColor: false,
-  build: function(l, hw) {
+  build: (l, hw) => {
     if (l) Floor.lines = l;
     if (hw) Floor.halfWidth = hw;
     var delta = 2 * Floor.halfWidth / Floor.lines;

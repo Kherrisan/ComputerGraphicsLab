@@ -6,8 +6,25 @@ function Camera() {
   this.onChange = null;
   this.steps = 0;
   this.dollystep = 0;
-  this.normal = vec3();
 }
+
+Camera.prototype.update = function() {
+  console.log("Camera update " + this.elevation + "," + this.azimuth);
+  this.matrix = mat4();
+
+  this.matrix = mult(this.matrix, rotateY(this.azimuth));
+  this.matrix = mult(this.matrix, rotateX(this.elevation));
+  this.matrix = mult(this.matrix, translate(this.position));
+
+  if (this.onChange) {
+    this.onChange();
+  }
+  // mat4.multiplyVec4(this.matrix, [1, 0, 0, 0], this.right);
+  // mat4.multiplyVec4(this.matrix, [0, 1, 0, 0], this.up);
+  // mat4.multiplyVec4(this.matrix, [0, 0, 1, 0], this.nomal);
+
+  // mat4.multiplyVec4(this.matrix, [0, 0, 0, 1], this.position);
+};
 
 Camera.prototype.getViewTransform = function() {
   return inverse4(this.matrix);
@@ -29,26 +46,6 @@ Camera.prototype.changeAzimuth = function(az) {
     this.azimuth = this.azimuth % 360;
   }
   this.update();
-};
-
-Camera.prototype.update = function() {
-  console.log("Camera update " + this.elevation + "," + this.azimuth);
-  this.matrix = mat4();
-
-  this.matrix = mult(this.matrix, rotateY(this.azimuth));
-  this.matrix = mult(this.matrix, rotateX(this.elevation));
-  this.matrix = mult(this.matrix, translate(this.position));
-
-  this.normal = this.matrix[2];
-
-  if (this.onChange) {
-    this.onChange();
-  }
-  // mat4.multiplyVec4(this.matrix, [1, 0, 0, 0], this.right);
-  // mat4.multiplyVec4(this.matrix, [0, 1, 0, 0], this.up);
-  // mat4.multiplyVec4(this.matrix, [0, 0, 1, 0], this.nomal);
-
-  // mat4.multiplyVec4(this.matrix, [0, 0, 0, 1], this.position);
 };
 
 Camera.prototype.setLocation = function(x, y, z) {
