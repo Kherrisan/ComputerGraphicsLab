@@ -114,33 +114,33 @@ function load() {
 
   Floor.build(40, 20);
   Scene.addObject(Floor);
-  // Cube.build();
-  // Scene.addObject(Cube);
-  // Scene.addObject(Cubed);
-  Scene.addObject(Heixiu);
+  //Cube.build();
+  //Scene.addObject(Cube);
+  Scene.addObject(Cubed);
+  //Scene.addObject(Heixiu);
 
   document.getElementById("RotateLeft").onclick = function() {
-    Cube.rotateLeft();
+    Heixiu.rotateLeft();
     draw();
   };
   document.getElementById("RotateRight").onclick = function() {
-    Cube.rotateRight();
+    Heixiu.rotateRight();
     draw();
   };
   document.getElementById("Forward").onclick = function() {
-    Cube.walkForward();
+    Heixiu.walkForward();
     draw();
   };
   document.getElementById("Backward").onclick = function() {
-    Cube.walkBackward();
+    Heixiu.walkBackward();
     draw();
   };
   document.getElementById("Shrink").onclick = function() {
-    Cube.shrink();
+    Heixiu.shrink();
     draw();
   };
   document.getElementById("Expand").onclick = function() {
-    Cube.expand();
+    Heixiu.expand();
     draw();
   };
   document.getElementById("RotateLeftd").onclick = function() {

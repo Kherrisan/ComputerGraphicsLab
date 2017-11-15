@@ -1,7 +1,7 @@
 var Heixiu = {
   FORWARD_STEP: 0.5,
   ROTATE_STEP: 5,
-  RESIZE_STEP: 0.5,
+  RESIZE_STEP: 0.1,
   perVertexColor: true,
   directDraw: true, //indicate that this object have drawing method directly invoked by Main.js,unlike the Scene object.
   rotateAngle: 0, //the angle around axis Y,start from positive x-axis.
@@ -72,9 +72,9 @@ var Heixiu = {
     Heixiu.rotateAngle += Heixiu.ROTATE_STEP;
   },
   shrink: function() {
-    Heixiu.size -= RESIZE_STEP;
+    Heixiu.size -= Heixiu.RESIZE_STEP;
   },
   expand: function() {
-    Heixiu.size += RESIZE_STEP;
+    Heixiu.size += Heixiu.RESIZE_STEP;
   }
 };
