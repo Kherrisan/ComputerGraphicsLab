@@ -29,6 +29,7 @@ function main() {
 function draw() {
   gl.viewport(0, 0, viewportWidth, viewportHeight);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  // gl.clearColor(0, 0, 0, 1);
 
   updateMatrixUniforms();
 
@@ -36,6 +37,12 @@ function draw() {
     var object = Scene.objects[i];
 
     gl.uniform1i(uPerVertexColor, object.perVertexColor);
+
+    if (object.directDraw) {
+      object.draw();
+      continue;
+    }
+
     gl.uniform4fv(uColor, object.color);
 
     gl.disableVertexAttribArray(aVertexColor);
@@ -107,8 +114,10 @@ function load() {
 
   Floor.build(40, 20);
   Scene.addObject(Floor);
-  Cube.build();
-  Scene.addObject(Cube);
+  // Cube.build();
+  // Scene.addObject(Cube);
+  // Scene.addObject(Cubed);
+  Scene.addObject(Heixiu);
 
   document.getElementById("RotateLeft").onclick = function() {
     Cube.rotateLeft();
@@ -132,6 +141,38 @@ function load() {
   };
   document.getElementById("Expand").onclick = function() {
     Cube.expand();
+    draw();
+  };
+  document.getElementById("RotateLeftd").onclick = function() {
+    Cubed.rotateLeft();
+    draw();
+  };
+  document.getElementById("RotateRightd").onclick = function() {
+    Cubed.rotateRight();
+    draw();
+  };
+  document.getElementById("Forwardd").onclick = function() {
+    Cubed.walkForward();
+    draw();
+  };
+  document.getElementById("Backwardd").onclick = function() {
+    Cubed.walkBackward();
+    draw();
+  };
+  document.getElementById("Shrinkd").onclick = function() {
+    Cubed.shrink();
+    draw();
+  };
+  document.getElementById("Expandd").onclick = function() {
+    Cubed.expand();
+    draw();
+  };
+  document.getElementById("in").onclick = function() {
+    camera.dollyin();
+    draw();
+  };
+  document.getElementById("out").onclick = function() {
+    camera.dollyout();
     draw();
   };
 }

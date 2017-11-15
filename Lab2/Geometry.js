@@ -38,16 +38,16 @@
         the program is a pointer to shaders.
  */
 function draw_ellipsoid(shape_data, rotate_mat) {
-  for (var i = 0; i < 12; i++) {
-    var ellipse_vertices = ellipsoid_generator(
-      shape_data["origin"],
-      shape_data["axis_length"],
-      shape_data["angle_range_vertical"],
-      shape_data["angle_range_horizontal"]
-    );
-    var colors = generateColors(ellipse_vertices.length, shape_data["color"]);
-    renderPoints(ellipse_vertices, colors, rotate_mat);
-  }
+  // for (var i = 0; i < 12; i++) {
+  var ellipse_vertices = ellipsoid_generator(
+    shape_data["origin"],
+    shape_data["axis_length"],
+    shape_data["angle_range_vertical"],
+    shape_data["angle_range_horizontal"]
+  );
+  var colors = generateColors(ellipse_vertices.length, shape_data["color"]);
+  renderPoints(ellipse_vertices, colors, rotate_mat);
+  // }
 }
 
 /*
@@ -71,16 +71,16 @@ function draw_ellipsoid(shape_data, rotate_mat) {
         the program is a pointer to shaders.
  */
 function draw_cylinder(shape_data, rotate_mat) {
-  for (var i = 0; i < 12; i++) {
-    var ellipse_vertices = cylinder_generator(
-      shape_data["origin"],
-      shape_data["axis_length"],
-      shape_data["height"],
-      shape_data["angle_range"]
-    );
-    var colors = generateColors(ellipse_vertices.length, shape_data["color"]);
-    renderPoints(ellipse_vertices, colors, rotate_mat);
-  }
+  // for (var i = 0; i < 12; i++) {
+  var ellipse_vertices = cylinder_generator(
+    shape_data["origin"],
+    shape_data["axis_length"],
+    shape_data["height"],
+    shape_data["angle_range"]
+  );
+  var colors = generateColors(ellipse_vertices.length, shape_data["color"]);
+  renderPoints(ellipse_vertices, colors, rotate_mat);
+  // }
 }
 
 /*
@@ -103,20 +103,21 @@ function draw_cylinder(shape_data, rotate_mat) {
         the program is a pointer to shaders.
  */
 function draw_taper(shape_data, rotate_mat) {
-  for (var i = 0; i < 12; i++) {
-    var ellipse_vertices = taper_generator(
-      shape_data["origin"],
-      shape_data["axis_length"],
-      shape_data["angle_range_vertical"],
-      shape_data["angle_range_horizontal"]
-    );
-    var colors = generateColors(ellipse_vertices.length, shape_data["color"]);
-    renderPoints(ellipse_vertices, colors, rotate_mat);
-  }
+  // for (var i = 0; i < 12; i++) {
+  var ellipse_vertices = taper_generator(
+    shape_data["origin"],
+    shape_data["axis_length"],
+    shape_data["angle_range_vertical"],
+    shape_data["angle_range_horizontal"]
+  );
+  var colors = generateColors(ellipse_vertices.length, shape_data["color"]);
+  renderPoints(ellipse_vertices, colors, rotate_mat);
+  // }
 }
 
 function renderPoints(vertices, colors, mat) {
   var colorBuffer = gl.createBuffer();
+  // gl.clear(gl.COLOR_BUFFER_BIT);
   gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
 
@@ -225,7 +226,7 @@ function taper_generator(origin, ellipse_axis, top_point, angle_range) {
   var a = ellipse_axis[0];
   var b = ellipse_axis[1];
 
-  for (var theta = angle_range[0]; theta < angle_range[1]; theta+=3) {
+  for (var theta = angle_range[0]; theta < angle_range[1]; theta++) {
     var p1 = vec3(top_point[0], top_point[1], top_point[2]);
     var p2 = vec3(
       a * Math.cos(theta / 180 * Math.PI) + abias,
@@ -254,7 +255,7 @@ function cylinder_generator(origin, ellipse_axis, height, angle_range) {
   var a = ellipse_axis[0];
   var b = ellipse_axis[1];
 
-  for (var theta = angle_range[0]; theta <= angle_range[1]; theta+=3) {
+  for (var theta = angle_range[0]; theta <= angle_range[1]; theta += 3) {
     var p1 = vec3(
       a * Math.cos(theta / 180 * Math.PI) + abias,
       -height / 2 + bbias,

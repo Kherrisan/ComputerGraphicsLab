@@ -1,6 +1,4 @@
 var Cube = {
-  //变换
-  Changable: true,
   // CurModelViewMatrix: mat4(), //当前变换矩阵
   translateStep: 0.2, //平移步长
   translateX: 0, //立方体x平移量
@@ -8,7 +6,6 @@ var Cube = {
   translateZ: 0, //立方体z平移量
   size: 1,
   RotateAngle: 0, //立方体旋转角度
-  //like floor
   vertices: [], //立方体顶点数---36
   indices: [], //索引数---36
   wireframe: false,

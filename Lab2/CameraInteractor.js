@@ -1,4 +1,5 @@
 function CameraInteractor(camera, canvas) {
+  this.count = 0;
   this.camera = camera;
   this.canvas = canvas;
   this.dragging = false;
@@ -20,24 +21,29 @@ function CameraInteractor(camera, canvas) {
   this.onMouseUp = () => {
     this.dragging = false;
   };
-  this.onMouseDown = () => {
+  this.onMouseDown = ev => {
     this.dragging = true;
+    this.x = ev.clientX;
+    this.y = ev.clientY;
   };
   this.onMouseMove = function(ev) {
+    if (!this.dragging) return;
+    // this.count++;
+    // if (this.count >= 5) {
+    this.count = 0;
     this.lastX = this.x;
     this.lastY = this.y;
     this.x = ev.clientX;
     this.y = ev.clientY;
 
-    if (!this.dragging) return;
-
     var dx = this.x - this.lastX;
     var dy = this.y - this.lastY;
     this.rotate(dx, dy);
+    // }
   };
   this.configure = function() {
     this.canvas.onmousedown = ev => {
-      this.onMouseDown();
+      this.onMouseDown(ev);
     };
     this.canvas.onmouseup = ev => {
       this.onMouseUp();

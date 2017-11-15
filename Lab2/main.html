@@ -36,18 +36,22 @@
     <script type="text/javascript" src="./common/MV.js"></script>
     <script type="text/javascript" src="./Camera.js"></script>
     <script type="text/javascript" src="./CameraInteractor.js"></script>
-    <script type="text/javascript" src="./Floor.js"></script>   
+    <script type="text/javascript" src="./Floor.js"></script>
+    <script type="text/javascript" src="./Geometry.js"></script>   
     <script type="text/javascript" src="./Cube.js"></script> 
+    <script type="text/javascript" src="./CubeD.js"></script> 
+    <script type="text/javascript" src="./Heixiu.js"></script> 
     <script type="text/javascript" src="./Scene.js"></script>
     <script type="text/javascript" src="./App.js"></script>
     <script type="text/javascript" src="./Main.js"></script>
 </head>
 
 <body>
-    <canvas id="gl-canvas" width="480" height="400">
+    <canvas id="gl-canvas" width="700" height="512">
         Oops ... your browser doesn't support the HTML5 canvas element
     </canvas>
 
+    <br/>
 
     <button id= "RotateLeft">Left Rotate </button>
     <button id= "RotateRight">Right Rotate</button>
@@ -55,6 +59,18 @@
     <button id= "Backward">Backwad</button>
     <button id= "Shrink">Shrink</button>
     <button id= "Expand">Expand</button>
+
+    <br/>
+    <button id= "RotateLeftd">Left Rotate </button>
+    <button id= "RotateRightd">Right Rotate</button>
+    <button id= "Forwardd">Forward</button>
+    <button id= "Backwardd">Backwad</button>
+    <button id= "Shrinkd">Shrink</button>
+    <button id= "Expandd">Expand</button>
+
+    <br/>
+    <button id= "in">Dolly In</button>
+    <button id= "out">Dolly Out</button>
 </body>
 
 </html>

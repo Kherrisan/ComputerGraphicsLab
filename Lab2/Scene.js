@@ -1,14 +1,26 @@
 var Scene = {
   objects: [],
   addObject: function(object) {
+    if (object.directDraw) {
+      Scene.objects.push(object);
+      return;
+    }
     var vertexBufferObject = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBufferObject);
-    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(object.vertices), gl.STATIC_DRAW);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array(object.vertices),
+      gl.STATIC_DRAW
+    );
 
     if (object.perVertexColor) {
       var colorBufferObject = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, colorBufferObject);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(object.colors), gl.STATIC_DRAW);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array(object.colors),
+        gl.STATIC_DRAW
+      );
       object.cbo = colorBufferObject;
     }
 
