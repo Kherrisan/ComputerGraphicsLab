@@ -36,62 +36,49 @@ function App(ch, lh, dh) {
     Floor.build(40, 20);
     Scene.addObject(Floor);
     Scene.addObject(Heixiu);
+    Scene.addObject(Xiaohei);
 
     document.getElementById("RotateLeft").onclick = () => {
-      Cube.rotateLeft();
-      draw();
+      Xiaohei.rotateLeft();
     };
     document.getElementById("RotateRight").onclick = () => {
-      Cube.rotateRight();
-      draw();
+      Xiaohei.rotateRight();
     };
     document.getElementById("Forward").onclick = () => {
-      Cube.walkForward();
-      draw();
+      Xiaohei.walkForward();
     };
     document.getElementById("Backward").onclick = () => {
-      Cube.walkBackward();
-      draw();
+      Xiaohei.walkBackward();
     };
     document.getElementById("Shrink").onclick = () => {
-      Cube.shrink();
-      draw();
+      Xiaohei.shrink();
     };
     document.getElementById("Expand").onclick = () => {
-      Cube.expand();
-      draw();
+      Xiaohei.expand();
     };
     document.getElementById("RotateLeftd").onclick = () => {
-      Cubed.rotateLeft();
-      draw();
+      Heixiu.rotateLeft();
     };
     document.getElementById("RotateRightd").onclick = () => {
-      Cubed.rotateRight();
-      draw();
+      Heixiu.rotateRight();
     };
     document.getElementById("Forwardd").onclick = () => {
-      Cubed.walkForward();
-      draw();
+      Heixiu.walkForward();
     };
     document.getElementById("Backwardd").onclick = () => {
-      Cubed.walkBackward();
-      draw();
+      Heixiu.walkBackward();
     };
     document.getElementById("Shrinkd").onclick = () => {
-      Cubed.shrink();
-      draw();
+      Heixiu.shrink();
     };
     document.getElementById("Expandd").onclick = () => {
-      Cubed.expand();
-      draw();
+      Heixiu.expand();
     };
     document.getElementById("in").onclick = () => {
       camera.dollyin();
-      draw();
     };
     document.getElementById("out").onclick = () => {
       camera.dollyout();
-      draw();
     };
   };
 

@@ -5,7 +5,7 @@ var Heixiu = {
   perVertexColor: true,
   directDraw: true, //indicate that this object have drawing method directly invoked by Main.js,unlike the Scene object.
   rotateAngle: 0, //the angle around axis Y,start from positive x-axis.
-  position: vec3(0, 0, 0), //the location of the center point of this animal.
+  position: vec3(5, 0, -5), //the location of the center point of this animal.
   size: 0.5, //expand and shrink factor.
   bodyMatrix: mat4(), //indicate the relative position and guesture of body to the origin point of Heixiu.
 
@@ -71,13 +71,13 @@ var Heixiu = {
     }
   },
   shrink: function() {
-    Heixiu.size -= RESIZE_STEP;
+    Heixiu.size -= Heixiu.RESIZE_STEP;
     if (Heixiu.onChange) {
       Heixiu.onChange();
     }
   },
   expand: function() {
-    Heixiu.size += RESIZE_STEP;
+    Heixiu.size += Heixiu.RESIZE_STEP;
     if (Heixiu.onChange) {
       Heixiu.onChange();
     }

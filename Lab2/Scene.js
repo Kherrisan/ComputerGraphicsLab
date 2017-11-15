@@ -1,7 +1,7 @@
 var Scene = {
   objects: [],
   addObject: object => {
-    object.onChange = App.draw;
+    object.onChange = app.draw;
     if (object.directDraw) {
       Scene.objects.push(object);
       return;
