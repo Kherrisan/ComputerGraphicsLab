@@ -35,4 +35,4 @@
 
 - 鼠标跟踪球算法
 
-![实验成果图](https://raw.githubusercontent.com/Dokyme/ComputerGraphicsLab/master/Lab1/result.png)
+![实验成果图](https://raw.githubusercontent.com/Dokyme/ComputerGraphicsLab/master/Lab2/Snipaste_2017-11-16_01-22-13.png)
