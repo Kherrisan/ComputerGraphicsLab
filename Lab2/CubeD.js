@@ -8,14 +8,14 @@ var Cubed = {
   RotateAngle: 0, //立方体旋转角度
   RESIZE_STEP: 0.1, //放缩幅度
   //like floor
-  position: vec3(0, 0, 0), //the location of the center point of this animal.
+  position: vec3(0, 5, 0), //the location of the center point of this animal.
   size: 0.5,
   wireframe: false,
   perVertexColor: true,
-  draw: function () {
+  draw: function() {
     //head
     var shape_data = {
-      origin: Cubed.position,
+      origin: vec3(0, 0, 0),
       axis_length: vec3(
         Cubed.size * 5, //脸宽
         Cubed.size * 4,
@@ -28,116 +28,100 @@ var Cubed = {
       color: vec4(0, 0, 0, 1)
     };
     var tMatrix = Cubed.generateTransformMatrix();
-    draw_ellipsoid(shape_data, Cubed.tMatrix); //draw the head.
+    var headMatrix = translate(0, 0, 0);
+    draw_ellipsoid(shape_data, mult(Cubed.tMatrix, headMatrix)); //draw the head.
     //body
-    shape_data.origin = vec3(
-      Cubed.position[0], //x
-      Cubed.position[1] - Cubed.size * 3.5, //y
-      Cubed.position[2] - Cubed.size * 4.5 //z
-    )
     shape_data.axis_length = vec3(
-      Cubed.size * 3,
-      Cubed.size * 5.2, //身长
-      Cubed.size * 3
-    )
-    draw_ellipsoid(shape_data, Cubed.tMatrix); //draw the body.
-    shape_data.origin = vec3(
-      //left ear buttom point
-      Cubed.position[0] - Cubed.size * 2,
-      Cubed.position[1] + Cubed.size * 2,
-      Cubed.position[2]
+      Cubed.size * 2,
+      Cubed.size * 4, //身长
+      Cubed.size * 2
     );
-    shape_data.axis_length = vec2(Cubed.size * 2.5, Cubed.size * 0.6);
+    var bodyMatrix = translate(0,- Cubed.size * 3.5 , - Cubed.size * 4.5);
+    draw_ellipsoid(shape_data, mult(Cubed.tMatrix,bodyMatrix)); //draw the body.
+    var leftEarMatrix = translate(-Cubed.size * 0.1, +Cubed.size * 0.5, 0);
+    shape_data.axis_length = vec2(Cubed.size * 5, Cubed.size * 3);
     //left ear top point
     shape_data.angle_range_vertical = vec3(
-      Cubed.position[0] - Cubed.size * 2 - 1.3,
-      Cubed.position[1] + Cubed.size * 3 + 1.2,
-      Cubed.position[2]
+      -Cubed.size * 6.4,
+      +Cubed.size * 4,
+      0
     );
+
     shape_data.angle_range_horizontal = vec2(0, 360);
-    draw_taper(shape_data, Cubed.tMatrix); //draw left ear.
-    shape_data.origin = vec3(
-      //set right ear buttom point
-      Cubed.position[0] + Cubed.size * 2,
-      Cubed.position[1] + +Cubed.size * 2,
-      Cubed.position[2]
-    );
-    shape_data.axis_length = vec2(Cubed.size * 2.5, Cubed.size * 0.6);
+    draw_taper(shape_data, mult(Cubed.tMatrix, leftEarMatrix)); //draw left ear.
+    var rightEarMatrix = translate(+Cubed.size * 0.1, +Cubed.size * 0.5, 0);
+    shape_data.axis_length = vec2(Cubed.size * 5, Cubed.size * 3);
     //right ear top point
-    shape_data.angle_range_vertical = vec3(
-      Cubed.position[0] + Cubed.size * 2 + 1.3,
-      Cubed.position[1] + Cubed.size * 3 + 1.2,
-      Cubed.position[2]
-    );
-    draw_taper(shape_data, Cubed.tMatrix); //draw right ear.
+    shape_data.angle_range_vertical = vec3(Cubed.size * 6.4, Cubed.size * 4, 0);
+    draw_taper(shape_data, mult(Cubed.tMatrix, rightEarMatrix)); //draw right ear.
     //left hand
-    shape_data.origin = vec3(0,0,0);
-    shape_data.height = Cubed.size * 5; //length
+
+    var leftHandMatrix = mult(
+      mult(rotateZ(15), rotateX(15)),
+      translate(-Cubed.size * 0.2, -Cubed.size * 5, -Cubed.size * 3)
+    );
+    shape_data.height = Cubed.size * 4; //length
     shape_data.axis_length = vec2(Cubed.size * 0.8, Cubed.size * 0.8);
-    shape_data.position_matrix = mult(
-      mult(rotateZ(15),rotateX(15)),
-      translate(Cubed.position[0]-Cubed.size*0.5,
-        Cubed.position[1]-Cubed.size*6, 
-        Cubed.position[2]-Cubed.size*3)); 
-    draw_cylinder(shape_data, mult(Cubed.tMatrix,shape_data.position_matrix)) //draw left hands
+    draw_cylinder(shape_data, mult(Cubed.tMatrix, leftHandMatrix)); //draw left hands
     //right hand
-    shape_data.position_matrix = mult(
-      mult(rotateZ(-15), rotateX(15)), 
-      translate(Cubed.position[0]+Cubed.size*0.5,
-        Cubed.position[1]-Cubed.size*6, 
-        Cubed.position[2]-Cubed.size*3)); 
-    draw_cylinder(shape_data, mult(Cubed.tMatrix,shape_data.position_matrix)) //draw left hands
+    var rightHandMatrix = mult(
+      mult(rotateZ(-15), rotateX(15)),
+      translate(+Cubed.size * 0.2, -Cubed.size * 5, -Cubed.size * 3)
+    );
+    draw_cylinder(shape_data, mult(Cubed.tMatrix, rightHandMatrix)); //draw left hands
     //==========//
     //left foot
+    var leftFootMatrix = mult(
+      mult(rotateZ(15), rotateX(15)),
+      translate(
+         - Cubed.size * 0,
+         - Cubed.size * 4,
+         - Cubed.size * 7.5
+      )
+    );
     shape_data.height = Cubed.size * 3; //length
     shape_data.axis_length = vec2(Cubed.size * 0.8, Cubed.size * 0.8);
-    shape_data.position_matrix = mult(
-      mult(rotateZ(15),rotateX(15)),
-      translate(Cubed.position[0]-Cubed.size*0.3,
-        Cubed.position[1]-Cubed.size*3, 
-        Cubed.position[2]-Cubed.size*9)); 
-    draw_cylinder(shape_data, mult(Cubed.tMatrix, shape_data.position_matrix))
+    draw_cylinder(shape_data, mult(Cubed.tMatrix, leftFootMatrix));
     //right foot
+    var rightFootMatrix = mult(
+      mult(rotateZ(-15), rotateX(15)),
+      translate(
+         + Cubed.size * 0,
+         - Cubed.size * 4,
+         - Cubed.size * 7.5
+      )
+    );
     shape_data.height = Cubed.size * 3; //length
-    shape_data.axis_length = vec2(Cubed.size * 0.8, Cubed.size * 0.8);
-    shape_data.position_matrix = mult(
-      mult(rotateZ(-15), rotateX(15)), 
-      translate(Cubed.position[0]+Cubed.size*0.3,
-        Cubed.position[1]-Cubed.size*3, 
-        Cubed.position[2]-Cubed.size*9)); 
-    draw_cylinder(shape_data, mult(Cubed.tMatrix, shape_data.position_matrix))
-
-
+    draw_cylinder(shape_data, mult(Cubed.tMatrix, rightFootMatrix));
   },
-  //MAVMatrix这个矩阵会同时影响到floor和Cube的转换
-  generateTransformMatrix: function () {
+  generateTransformMatrix: function() {
     var RE = scalem(Cubed.size, Cubed.size, Cubed.size);
-    var T = translate(Cubed.position[0], 0.0, Cubed.position[2]);
+    var T = translate(Cubed.position[0], Cubed.position[1], Cubed.position[2]);
     var R = rotateY(Cubed.RotateAngle);
     Cubed.tMatrix = mult(T, mult(R, RE));
   },
-  rotateRight: function () {
+  rotateRight: function() {
     Cubed.RotateAngle += Cubed.ROTATE_STEP;
   },
-  rotateLeft: function () {
+  rotateLeft: function() {
     Cubed.RotateAngle -= Cubed.ROTATE_STEP;
   },
-  walkForward: function () {
+  walkForward: function() {
     Cubed.position[0] +=
       Cubed.FORWARD_STEP * -1 * Math.sin(radians(Cubed.RotateAngle));
     Cubed.position[2] +=
       Cubed.FORWARD_STEP * Math.cos(radians(Cubed.RotateAngle));
   },
-  walkBackward: function () {
+  walkBackward: function() {
     Cubed.position[0] +=
       Cubed.FORWARD_STEP * Math.sin(radians(Cubed.RotateAngle));
     Cubed.position[2] +=
       Cubed.FORWARD_STEP * -1 * Math.cos(radians(Cubed.RotateAngle));
   },
-  shrink: function () {
+  shrink: function() {
     Cubed.size -= Cubed.RESIZE_STEP;
   },
-  expand: function () {
+  expand: function() {
     Cubed.size += Cubed.RESIZE_STEP;
   }
 };
