@@ -39,6 +39,7 @@
  */
 function draw_ellipsoid(shape_data, rotate_mat) {
   // for (var i = 0; i < 12; i++) {
+  //点和颜色放入obj.build里边，然后生成的话放入app.js里边
   var ellipse_vertices = ellipsoid_generator(
     shape_data["origin"],
     shape_data["axis_length"],

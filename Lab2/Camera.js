@@ -11,10 +11,11 @@ function Camera() {
 Camera.prototype.update = function() {
   console.log("Camera update " + this.elevation + "," + this.azimuth);
   this.matrix = mat4();
-
+  
+  this.matrix = mult(this.matrix, translate(this.position));
   this.matrix = mult(this.matrix, rotateY(this.azimuth));
   this.matrix = mult(this.matrix, rotateX(this.elevation));
-  this.matrix = mult(this.matrix, translate(this.position));
+
 
   if (this.onChange) {
     this.onChange();
@@ -27,6 +28,7 @@ Camera.prototype.update = function() {
 };
 
 Camera.prototype.getViewTransform = function() {
+  //return this.matrix;
   return inverse4(this.matrix);
 };
 
