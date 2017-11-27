@@ -255,7 +255,7 @@ function cylinder_generator(origin, ellipse_axis, height, angle_range) {
   var a = ellipse_axis[0];
   var b = ellipse_axis[1];
 
-  for (var theta = angle_range[0]; theta <= angle_range[1]; theta += 3) {
+  for (var theta = angle_range[0]; theta <= angle_range[1]; theta += 1) {
     var p1 = vec3(
       a * Math.cos(theta / 180 * Math.PI) + abias,
       -height / 2 + bbias,

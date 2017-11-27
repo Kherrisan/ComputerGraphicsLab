@@ -8,7 +8,7 @@ function CameraInteractor(camera, canvas) {
   this.x = 0.0;
   this.y = 0.0;
   this.MOTION_FACTOR = 10.0;
-  this.rotate = function(dx, dy) {
+  this.rotate = (dx, dy) => {
     var dElevation = -20.0 / this.canvas.height;
     var dAzimuth = -20.0 / this.canvas.width;
 
@@ -26,7 +26,7 @@ function CameraInteractor(camera, canvas) {
     this.x = ev.clientX;
     this.y = ev.clientY;
   };
-  this.onMouseMove = function(ev) {
+  this.onMouseMove = ev => {
     if (!this.dragging) return;
     // this.count++;
     // if (this.count >= 5) {
@@ -41,7 +41,7 @@ function CameraInteractor(camera, canvas) {
     this.rotate(dx, dy);
     // }
   };
-  this.configure = function() {
+  this.configure = () => {
     this.canvas.onmousedown = ev => {
       this.onMouseDown(ev);
     };
