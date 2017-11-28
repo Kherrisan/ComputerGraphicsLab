@@ -35,8 +35,18 @@ function App(ch, lh, dh) {
 
     Floor.build(40, 20);
     Scene.addObject(Floor);
-    // Heixiu.build();
-    // Scene.addObject(Heixiu);
+
+    heixiu = new Heixiu();
+    heixiu2 = new Heixiu();
+    heixiu.setLocation(3, 1, -3);
+    heixiu2.setLocation(-3,1, -3);
+    heixiu.onChange = this.draw;
+    heixiu2.onChange = this.draw;
+    heixiu.build();
+    heixiu2.build();
+    Scene.addObject(heixiu);
+    Scene.addObject(heixiu2);
+
     Xiaohei.build();
     Scene.addObject(Xiaohei);
 
@@ -58,23 +68,41 @@ function App(ch, lh, dh) {
     document.getElementById("Expand").onclick = () => {
       Xiaohei.expand();
     };
-    document.getElementById("RotateLeftd").onclick = () => {
-      Heixiu.rotateLeft();
+    document.getElementById("RotateLeft1").onclick = () => {
+      heixiu.rotateLeft();
     };
-    document.getElementById("RotateRightd").onclick = () => {
-      Heixiu.rotateRight();
+    document.getElementById("RotateRight1").onclick = () => {
+      heixiu.rotateRight();
     };
-    document.getElementById("Forwardd").onclick = () => {
-      Heixiu.walkForward();
+    document.getElementById("Forward1").onclick = () => {
+      heixiu.walkForward();
     };
-    document.getElementById("Backwardd").onclick = () => {
-      Heixiu.walkBackward();
+    document.getElementById("Backward1").onclick = () => {
+      heixiu.walkBackward();
     };
-    document.getElementById("Shrinkd").onclick = () => {
-      Heixiu.shrink();
+    document.getElementById("Shrink1").onclick = () => {
+      heixiu.shrink();
     };
-    document.getElementById("Expandd").onclick = () => {
-      Heixiu.expand();
+    document.getElementById("Expand1").onclick = () => {
+      heixiu.expand();
+    };
+    document.getElementById("RotateLeft2").onclick = () => {
+      heixiu2.rotateLeft();
+    };
+    document.getElementById("RotateRight2").onclick = () => {
+      heixiu2.rotateRight();
+    };
+    document.getElementById("Forward2").onclick = () => {
+      heixiu2.walkForward();
+    };
+    document.getElementById("Backward2").onclick = () => {
+      heixiu2.walkBackward();
+    };
+    document.getElementById("Shrink2").onclick = () => {
+      heixiu2.shrink();
+    };
+    document.getElementById("Expand2").onclick = () => {
+      heixiu2.expand();
     };
     document.getElementById("in").onclick = () => {
       camera.dollyin();
