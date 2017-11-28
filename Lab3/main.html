@@ -8,14 +8,33 @@
     <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
 
     <script id="vertex-shader" type="x-shader/x-vertex">
-        uniform mat4 uPMatrix; uniform mat4 uMVMatrix; uniform mat4 uTMatrix; uniform bool uPerVertexColor; uniform vec4 uColor;
-        attribute vec3 aVertexPosition; attribute vec4 aVertexColor; varying vec4 fColor; void main() { gl_Position = uPMatrix
-        * uMVMatrix * uTMatrix * vec4(aVertexPosition,1.0); if(uPerVertexColor){ fColor = aVertexColor; } else { fColor =
-        uColor; } }
+        uniform mat4 uPMatrix;
+        uniform mat4 uMVMatrix;
+        uniform mat4 uTMatrix;
+        uniform bool uPerVertexColor;
+        uniform vec4 uColor;
+        attribute vec3 aVertexPosition;
+        attribute vec4 aVertexColor;
+        varying vec4 fColor;
+        void main()
+        {
+            gl_Position = uPMatrix * uMVMatrix * uTMatrix * vec4(aVertexPosition, 1.0);
+            if (uPerVertexColor)
+            {
+                fColor = aVertexColor;
+            }
+            else
+            {
+                fColor =
+                    uColor;
+            }
+        }
     </script>
 
     <script id="fragment-shader" type="x-shader/x-fragment">
-        precision mediump float; varying vec4 fColor; void main() { gl_FragColor = fColor; }
+        precision mediump float;
+        varying vec4 fColor;
+        void main() { gl_FragColor = fColor; }
     </script>
 
     <script type="text/javascript" src="./common/webgl-utils.js"></script>
@@ -26,7 +45,6 @@
     <script type="text/javascript" src="./Floor.js"></script>
     <script type="text/javascript" src="./Geometry.js"></script>
     <script type="text/javascript" src="./Scene.js"></script>
-    <script type="text/javascript" src="./Heixiu.js"></script>
     <script type="text/javascript" src="./Xiaohei.js"></script>
     <script type="text/javascript" src="./App.js"></script>
     <script type="text/javascript" src="./Main.js"></script>

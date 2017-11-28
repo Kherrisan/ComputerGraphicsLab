@@ -3,10 +3,9 @@ var Floor = {
   lines: 50,
   halfWidth: 50,
   wireframe: true,
-  vertices: [],
-  indices: [],
   color: [0.7, 0.7, 0.7, 1],
   perVertexColor: false,
+  indicesNum: false,
   build: (l, hw) => {
     if (l) Floor.lines = l;
     if (hw) Floor.halfWidth = hw;
@@ -41,7 +40,16 @@ var Floor = {
       i[2 * (Floor.lines + 1) + 2 * iline + 1] =
         2 * (Floor.lines + 1) + 2 * iline + 1;
     }
-    Floor.vertices = v;
-    Floor.indices = i;
+
+    Floor.vbo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, Floor.vbo);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(v), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    Floor.indicesNum=i.length;
+    Floor.ibo = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, Floor.ibo);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(i), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
   }
 };

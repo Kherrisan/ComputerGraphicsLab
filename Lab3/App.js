@@ -35,8 +35,8 @@ function App(ch, lh, dh) {
 
     Floor.build(40, 20);
     Scene.addObject(Floor);
-    Heixiu.build();
-    Scene.addObject(Heixiu);
+    // Heixiu.build();
+    // Scene.addObject(Heixiu);
     Xiaohei.build();
     Scene.addObject(Xiaohei);
 
@@ -115,14 +115,12 @@ function App(ch, lh, dh) {
     for (var i = 0; i < Scene.objects.length; i++) {
       var object = Scene.objects[i];
 
-      gl.uniform1i(uPerVertexColor, object.perVertexColor);
-
-      if (object.directDraw) {
-        object.draw();
-        continue;
+      if (object.perVertexColor) {
+        gl.uniform1i(uPerVertexColor, object.perVertexColor);
+      } else {
+        gl.uniform1i(uPerVertexColor, false);
+        gl.uniform4fv(uColor, object.color);
       }
-
-      gl.uniform4fv(uColor, object.color);
 
       gl.disableVertexAttribArray(aVertexColor);
 
@@ -130,8 +128,8 @@ function App(ch, lh, dh) {
       gl.vertexAttribPointer(aVertexPosition, 3, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(aVertexPosition);
 
-      if (object.tMatrix) {
-        gl.uniformMatrix4fv(uTMatrix, false, flatten(object.tMatrix));
+      if (object.transformMatrix) {
+        gl.uniformMatrix4fv(uTMatrix, false, flatten(object.transformMatrix));
       } else {
         gl.uniformMatrix4fv(uTMatrix, false, flatten(mat4()));
       }
@@ -142,17 +140,20 @@ function App(ch, lh, dh) {
         gl.enableVertexAttribArray(aVertexColor);
       }
 
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, object.ibo);
-
-      if (object.wireframe) {
-        gl.drawElements(gl.LINES, object.indices.length, gl.UNSIGNED_SHORT, 0);
+      if (object.ibo) {
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, object.ibo);
+        if (object.wireframe) {
+          gl.drawElements(gl.LINES, object.indicesNum, gl.UNSIGNED_SHORT, 0);
+        } else {
+          gl.drawElements(
+            gl.TRIANGLES,
+            object.indicesNum,
+            gl.UNSIGNED_SHORT,
+            0
+          );
+        }
       } else {
-        gl.drawElements(
-          gl.TRIANGLES,
-          object.indices.length,
-          gl.UNSIGNED_SHORT,
-          0
-        );
+        gl.drawArrays(gl.TRIANGLES, 0, object.vertexNum);
       }
 
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
