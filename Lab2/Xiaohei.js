@@ -1,7 +1,5 @@
 var Xiaohei = {
   directDraw: true,
-  //变换
-  Changable: true,
   // CurModelViewMatrix: mat4(), //当前变换矩阵
   FORWARD_STEP: 0.2, //平移步长
   ROTATE_STEP: 5,
@@ -12,6 +10,9 @@ var Xiaohei = {
   size: 0.5,
   wireframe: false,
   perVertexColor: true,
+  build: function() {
+    
+  },
   draw: function() {
     //head
     var shape_data = {
