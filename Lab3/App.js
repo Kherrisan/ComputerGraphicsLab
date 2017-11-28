@@ -122,7 +122,7 @@ function App(ch, lh, dh) {
         gl.uniform4fv(uColor, object.color);
       }
 
-      gl.disableVertexAttribArray(aVertexColor);
+      // gl.disableVertexAttribArray(aVertexColor);
 
       gl.bindBuffer(gl.ARRAY_BUFFER, object.vbo);
       gl.vertexAttribPointer(aVertexPosition, 3, gl.FLOAT, false, 0, 0);
