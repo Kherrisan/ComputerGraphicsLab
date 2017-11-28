@@ -37,12 +37,10 @@
     @param program:
         the program is a pointer to shaders.
  */
-function draw_ellipsoid(shape_data, rotate_mat) {
+function draw_ellipsoid(vertices,colors, rotate_mat) {
   // for (var i = 0; i < 12; i++) {
   //点和颜色放入obj.build里边，然后生成的话放入app.js里边
-  var ellipse_vertices = ellipsoid_generator(shape_data);
-  var colors = generateColors(ellipse_vertices.length, shape_data["color"]);
-  renderPoints(ellipse_vertices, colors, rotate_mat);
+  renderPoints(vertices, colors, rotate_mat);
   // }
 }
 
@@ -66,11 +64,9 @@ function draw_ellipsoid(shape_data, rotate_mat) {
     @param program:
         the program is a pointer to shaders.
  */
-function draw_cylinder(shape_data, rotate_mat) {
+function draw_cylinder(vertices,colors, rotate_mat) {
   // for (var i = 0; i < 12; i++) {
-  var ellipse_vertices = cylinder_generator(shape_data);
-  var colors = generateColors(ellipse_vertices.length, shape_data["color"]);
-  renderPoints(ellipse_vertices, colors, rotate_mat);
+  renderPoints(vertices, colors, rotate_mat);
   // }
 }
 
@@ -93,11 +89,9 @@ function draw_cylinder(shape_data, rotate_mat) {
     @param program:
         the program is a pointer to shaders.
  */
-function draw_taper(shape_data, rotate_mat) {
+function draw_taper(vertices,colors, rotate_mat) {
   // for (var i = 0; i < 12; i++) {
-  var ellipse_vertices = taper_generator(shape_data);
-  var colors = generateColors(ellipse_vertices.length, shape_data["color"]);
-  renderPoints(ellipse_vertices, colors, rotate_mat);
+  renderPoints(vertices, colors, rotate_mat);
   // }
 }
 

@@ -35,7 +35,9 @@ function App(ch, lh, dh) {
 
     Floor.build(40, 20);
     Scene.addObject(Floor);
+    Heixiu.build();
     Scene.addObject(Heixiu);
+    Xiaohei.build();
     Scene.addObject(Xiaohei);
 
     document.getElementById("RotateLeft").onclick = () => {
