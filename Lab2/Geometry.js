@@ -40,12 +40,7 @@
 function draw_ellipsoid(shape_data, rotate_mat) {
   // for (var i = 0; i < 12; i++) {
   //点和颜色放入obj.build里边，然后生成的话放入app.js里边
-  var ellipse_vertices = ellipsoid_generator(
-    shape_data["origin"],
-    shape_data["axis_length"],
-    shape_data["angle_range_vertical"],
-    shape_data["angle_range_horizontal"]
-  );
+  var ellipse_vertices = ellipsoid_generator(shape_data);
   var colors = generateColors(ellipse_vertices.length, shape_data["color"]);
   renderPoints(ellipse_vertices, colors, rotate_mat);
   // }
@@ -73,12 +68,7 @@ function draw_ellipsoid(shape_data, rotate_mat) {
  */
 function draw_cylinder(shape_data, rotate_mat) {
   // for (var i = 0; i < 12; i++) {
-  var ellipse_vertices = cylinder_generator(
-    shape_data["origin"],
-    shape_data["axis_length"],
-    shape_data["height"],
-    shape_data["angle_range_horizontal"]
-  );
+  var ellipse_vertices = cylinder_generator(shape_data);
   var colors = generateColors(ellipse_vertices.length, shape_data["color"]);
   renderPoints(ellipse_vertices, colors, rotate_mat);
   // }
@@ -105,12 +95,7 @@ function draw_cylinder(shape_data, rotate_mat) {
  */
 function draw_taper(shape_data, rotate_mat) {
   // for (var i = 0; i < 12; i++) {
-  var ellipse_vertices = taper_generator(
-    shape_data["origin"],
-    shape_data["axis_length"],
-    shape_data["angle_range_vertical"],
-    shape_data["angle_range_horizontal"]
-  );
+  var ellipse_vertices = taper_generator(shape_data);
   var colors = generateColors(ellipse_vertices.length, shape_data["color"]);
   renderPoints(ellipse_vertices, colors, rotate_mat);
   // }
@@ -137,74 +122,65 @@ function renderPoints(vertices, colors, mat) {
   gl.drawArrays(gl.TRIANGLES, 0, vertices.length);
 }
 
-function ellipsoid_generator(
-  origin,
-  axis_length,
-  angle_range_vertical,
-  angle_range_horizontal
-) {
-  var a = axis_length[0];
-  var b = axis_length[1];
-  var c = axis_length[2];
-  var abias = origin[0];
-  var bbias = origin[1];
-  var cbias = origin[2];
+function ellipsoid_generator(shape_data) {
+  var a = shape_data["axis_length"][0];
+  var b = shape_data["axis_length"][1];
+  var c = shape_data["axis_length"][2];
+  var abias = shape_data["origin"][0];
+  var bbias = shape_data["origin"][1];
+  var cbias = shape_data["origin"][2];
   var points = [];
   var theta_step = 3;
   var fai_step = 3;
 
   for (
-    var theta = angle_range_vertical[0];
-    theta < angle_range_vertical[1];
-    theta += theta_step
+    var theta = shape_data["angle_range_vertical"][0]; theta < shape_data["angle_range_vertical"][1]; theta += theta_step
   ) {
     for (
-      var fai = angle_range_horizontal[0];
-      fai < angle_range_horizontal[1];
-      fai += fai_step
+      var fai = shape_data["angle_range_horizontal"][0]; fai < shape_data["angle_range_horizontal"][1]; fai += fai_step
     ) {
       var p1 = vec3(
         a * Math.sin(theta / 180 * Math.PI) * Math.cos(fai / 180 * Math.PI) +
-          abias,
+        abias,
         c * Math.cos(theta / 180 * Math.PI) + bbias,
         b * Math.sin(theta / 180 * Math.PI) * Math.sin(fai / 180 * Math.PI) +
-          cbias
+        cbias
       );
 
       var p2 = vec3(
         a *
-          Math.sin((theta + theta_step) / 180 * Math.PI) *
-          Math.cos(fai / 180 * Math.PI) +
-          abias,
+        Math.sin((theta + theta_step) / 180 * Math.PI) *
+        Math.cos(fai / 180 * Math.PI) +
+        abias,
         c * Math.cos((theta + theta_step) / 180 * Math.PI) + bbias,
         b *
-          Math.sin((theta + theta_step) / 180 * Math.PI) *
-          Math.sin(fai / 180 * Math.PI) +
-          cbias
+        Math.sin((theta + theta_step) / 180 * Math.PI) *
+        Math.sin(fai / 180 * Math.PI) +
+        cbias
       );
 
       var p3 = vec3(
         a *
-          Math.sin((theta + theta_step) / 180 * Math.PI) *
-          Math.cos((fai + fai_step) / 180 * Math.PI) +
-          abias,
+        Math.sin((theta + theta_step) / 180 * Math.PI) *
+        Math.cos((fai + fai_step) / 180 * Math.PI) +
+        abias,
         c * Math.cos((theta + theta_step) / 180 * Math.PI) + bbias,
         b *
-          Math.sin((theta + theta_step) / 180 * Math.PI) *
-          Math.sin((fai + fai_step) / 180 * Math.PI) +
-          cbias
+        Math.sin((theta + theta_step) / 180 * Math.PI) *
+        Math.sin((fai + fai_step) / 180 * Math.PI) +
+        cbias
       );
 
       var p4 = vec3(
         a *
-          Math.sin(theta / 180 * Math.PI) *
-          Math.cos((fai + fai_step) / 180 * Math.PI) +
-          abias,
+        Math.sin(theta / 180 * Math.PI) *
+        Math.cos((fai + fai_step) / 180 * Math.PI) +
+        abias,
         c * Math.cos(theta / 180 * Math.PI) + bbias,
         b *
-          Math.sin(theta / 180 * Math.PI) *
-          Math.sin((fai + fai_step) / 180 * Math.PI) +
-          cbias
+        Math.sin(theta / 180 * Math.PI) *
+        Math.sin((fai + fai_step) / 180 * Math.PI) +
+        cbias
       );
 
       points.push(p1);
@@ -219,16 +195,16 @@ function ellipsoid_generator(
   return points;
 }
 
-function taper_generator(origin, ellipse_axis, top_point, angle_range) {
+function taper_generator(shape_data) {
   var points = [];
-  var abias = origin[0];
-  var bbias = origin[1];
-  var cbias = origin[2];
-  var a = ellipse_axis[0];
-  var b = ellipse_axis[1];
+  var abias = shape_data["origin"][0];
+  var bbias = shape_data["origin"][1];
+  var cbias = shape_data["origin"][2];
+  var a = shape_data["axis_length"][0];
+  var b = shape_data["axis_length"][1];
 
-  for (var theta = angle_range[0]; theta < angle_range[1]; theta++) {
-    var p1 = vec3(top_point[0], top_point[1], top_point[2]);
+  for (var theta = shape_data["angle_range_horizontal"][0]; theta < shape_data["angle_range_horizontal"][1]; theta++) {
+    var p1 = vec3(shape_data["angle_range_vertical"][0], shape_data["angle_range_vertical"][1], shape_data["angle_range_vertical"][2]);
     var p2 = vec3(
       a * Math.cos(theta / 180 * Math.PI) + abias,
       bbias,
@@ -248,33 +224,31 @@ function taper_generator(origin, ellipse_axis, top_point, angle_range) {
   return points;
 }
 
-function cylinder_generator(origin, ellipse_axis, height, angle_range) {
+function cylinder_generator(shape_data) {
   var points = [];
-  var abias = origin[0];
-  var bbias = origin[1];
-  var cbias = origin[2];
-  var a = ellipse_axis[0];
-  var b = ellipse_axis[1];
+  var abias = shape_data["origin"][0];
+  var bbias = shape_data["origin"][1];
+  var cbias = shape_data["origin"][2];
+  var a = shape_data["axis_length"][0];
+  var b = shape_data["axis_length"][1];
 
-  for (var theta = angle_range[0]; theta <= angle_range[1]; theta += 1) {
+  for (var theta = shape_data["angle_range_horizontal"][0]; theta <= shape_data["angle_range_horizontal"][1]; theta += 1) {
     var p1 = vec3(
-      a * Math.cos(theta / 180 * Math.PI) + abias,
-      -height / 2 + bbias,
+      a * Math.cos(theta / 180 * Math.PI) + abias, -shape_data["height"] / 2 + bbias,
       b * Math.sin(theta / 180 * Math.PI) + cbias
     );
     var p2 = vec3(
       a * Math.cos(theta / 180 * Math.PI) + abias,
-      height / 2 + bbias,
+      shape_data["height"] / 2 + bbias,
       b * Math.sin(theta / 180 * Math.PI) + cbias
     );
     var p3 = vec3(
       a * Math.cos((theta + 1) / 180 * Math.PI) + abias,
-      height / 2 + bbias,
+      shape_data["height"] / 2 + bbias,
       b * Math.sin((theta + 1) / 180 * Math.PI) + cbias
     );
     var p4 = vec3(
-      a * Math.cos((theta + 1) / 180 * Math.PI) + abias,
-      -height / 2 + bbias,
+      a * Math.cos((theta + 1) / 180 * Math.PI) + abias, -shape_data["height"] / 2 + bbias,
       b * Math.sin((theta + 1) / 180 * Math.PI) + cbias
     );
 
