@@ -12,8 +12,8 @@ function CameraInteractor(camera, canvas) {
     var dElevation = -20.0 / this.canvas.height;
     var dAzimuth = -20.0 / this.canvas.width;
 
-    var nAzimuth = dx * dAzimuth * this.MOTION_FACTOR; //方位角
-    var nElevation = dy * dElevation * this.MOTION_FACTOR; //仰角
+    var nAzimuth = dx * dAzimuth * this.MOTION_FACTOR;
+    var nElevation = dy * dElevation * this.MOTION_FACTOR;
 
     this.camera.changeAzimuth(nAzimuth);
     this.camera.changeElevation(nElevation);
