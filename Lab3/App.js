@@ -1,5 +1,6 @@
 var TIMER_ID = -1;
 var RENDER_RATE = 100;
+var key_move = 0.1;
 
 function App(ch, lh, dh) {
   this.load = () => {
@@ -39,7 +40,7 @@ function App(ch, lh, dh) {
     heixiu = new Heixiu();
     heixiu2 = new Heixiu();
     heixiu.setLocation(3, 1, -3);
-    heixiu2.setLocation(-3,1, -3);
+    heixiu2.setLocation(-3, 1, -3);
     heixiu.onChange = this.draw;
     heixiu2.onChange = this.draw;
     heixiu.build();
@@ -109,6 +110,41 @@ function App(ch, lh, dh) {
     };
     document.getElementById("out").onclick = () => {
       camera.dollyout();
+    };
+    document.onkeydown = function(event) {
+      var e = event || window.event || arguments.callee.caller.arguments[0];
+
+      var length = Math.sqrt(
+        camera.position[0] * camera.position[0] +
+          camera.position[1] * camera.position[1] +
+          camera.position[2] * camera.position[2]
+      );
+
+      if (e && e.keyCode == 37) {
+        camera.changeAzimuth(1);
+      } else if (e && e.keyCode == 38) {
+        camera.changeElevation(1);
+      } else if (e && e.keyCode == 39) {
+        camera.changeAzimuth(-1);
+      } else if (e && e.keyCode == 40) {
+        camera.changeElevation(-1);
+      } else if (e && e.keyCode == 87) {
+        camera.setLocation(
+          vec3(
+            camera.position[0] - key_move * camera.position[0] / length,
+            camera.position[1] - key_move * camera.position[1] / length,
+            camera.position[2] - key_move * camera.position[2] / length
+          )
+        );
+      } else if (e && e.keyCode == 83) {
+        camera.setLocation(
+          vec3(
+            camera.position[0] + key_move * camera.position[0] / length,
+            camera.position[1] + key_move * camera.position[1] / length,
+            camera.position[2] + key_move * camera.position[2] / length
+          )
+        );
+      }
     };
   };
 
