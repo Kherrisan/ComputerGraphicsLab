@@ -8,7 +8,9 @@ var Heixiu = {
   position: vec3(3, 1, -3), //the location of the center point of this animal.
   size: 0.2, //expand and shrink factor.
   bodyMatrix: mat4(), //indicate the relative position and guesture of body to the origin point of Heixiu.
-
+  vertices: [],
+  indices: [],
+  build: function() {},
   generateTransformMatrix: function() {
     var RE = scalem(Heixiu.size, Heixiu.size, Heixiu.size);
     var T = translate(

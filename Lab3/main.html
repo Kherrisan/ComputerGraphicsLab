@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        uniform mat4 uPMatrix;
+        uniform mat4 uMVMatrix;
+        uniform mat4 uTMatrix;
+        uniform bool uPerVertexColor;
+        uniform vec4 uColor;
+        attribute vec3 aVertexPosition;
+        attribute vec4 aVertexColor;
+        varying vec4 fColor;
+        void main()
+        {
+            gl_Position = uPMatrix * uMVMatrix * uTMatrix * vec4(aVertexPosition, 1.0);
+            if (uPerVertexColor)
+            {
+                fColor = aVertexColor;
+            }
+            else
+            {
+                fColor =
+                    uColor;
+            }
+        }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec4 fColor;
+        void main() { gl_FragColor = fColor; }
+    </script>
+
+    <script type="text/javascript" src="./common/webgl-utils.js"></script>
+    <script type="text/javascript" src="./common/initShaders.js"></script>
+    <script type="text/javascript" src="./common/MV.js"></script>
+    <script type="text/javascript" src="./Camera.js"></script>
+    <script type="text/javascript" src="./CameraInteractor.js"></script>
+    <script type="text/javascript" src="./Floor.js"></script>
+    <script type="text/javascript" src="./Geometry.js"></script>
+    <script type="text/javascript" src="./Scene.js"></script>
+    <script type="text/javascript" src="./Xiaohei.js"></script>
+    <script type="text/javascript" src="./Heixiu.js"></script>
+    <script type="text/javascript" src="./App.js"></script>
+    <script type="text/javascript" src="./Main.js"></script>
+
+</head>
+
+<body>
+    <canvas id="gl-canvas" width="700" height="512">
+        Oops ... your browser doesn't support the HTML5 canvas element
+    </canvas>
+    <div class="container">
+        <div class="row">
+            <h3>罗小黑</h3>
+            <button type="button" id="RotateLeft" class="btn btn-default">Left Rotate</button>
+            <button type="button" id="RotateRight" class="btn btn-primary">Right Rotate</button>
+            <button type="button" id="Forward" class="btn btn-success">Forward</button>
+            <button type="button" id="Backward" class="btn btn-info">Backwad</button>
+            <button type="button" id="Shrink" class="btn btn-warning">Shrink</button>
+            <button type="button" id="Expand" class="btn btn-danger">Expand</button>
+        </div>
+        <div class="row">
+            <h3>嘿咻1</h3>
+            <button type="button" id="RotateLeft1" class="btn btn-default">Left Rotate</button>
+            <button type="button" id="RotateRight1" class="btn btn-primary">Right Rotate</button>
+            <button type="button" id="Forward1" class="btn btn-success">Forward</button>
+            <button type="button" id="Backward1" class="btn btn-info">Backwad</button>
+            <button type="button" id="Shrink1" class="btn btn-warning">Shrink</button>
+            <button type="button" id="Expand1" class="btn btn-danger">Expand</button>
+        </div>
+        <div class="row">
+            <h3>嘿咻2</h3>
+            <button type="button" id="RotateLeft2" class="btn btn-default">Left Rotate</button>
+            <button type="button" id="RotateRight2" class="btn btn-primary">Right Rotate</button>
+            <button type="button" id="Forward2" class="btn btn-success">Forward</button>
+            <button type="button" id="Backward2" class="btn btn-info">Backwad</button>
+            <button type="button" id="Shrink2" class="btn btn-warning">Shrink</button>
+            <button type="button" id="Expand2" class="btn btn-danger">Expand</button>
+        </div>
+        <div class="row">
+            <h3>相机</h3>
+            <button type="button" id="in" class="btn btn-primary">Dolly In</button>
+            <button type="button" id="out" class="btn btn-primary">Dolly Out</button>
+        </div>
+        </container>
+</body>
+
+</html>
