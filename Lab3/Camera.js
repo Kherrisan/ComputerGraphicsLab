@@ -9,13 +9,14 @@ function Camera() {
 }
 
 Camera.prototype.update = function() {
-  console.log("Camera update " + this.elevation + "," + this.azimuth);
+  console.log(
+    "Camera update " + this.elevation + "," + this.azimuth + "," + this.position
+  );
   this.matrix = mat4();
-  
+
   this.matrix = mult(this.matrix, translate(this.position));
   this.matrix = mult(this.matrix, rotateY(this.azimuth));
   this.matrix = mult(this.matrix, rotateX(this.elevation));
-
 
   if (this.onChange) {
     this.onChange();
