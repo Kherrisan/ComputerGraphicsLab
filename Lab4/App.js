@@ -22,6 +22,10 @@ function App(ch, lh, dh) {
 
     aVertexPosition = gl.getAttribLocation(program, "aVertexPosition");
     aVertexColor = gl.getAttribLocation(program, "aVertexColor");
+    aVertexTextureCoords = gl.getAttribLocation(
+      program,
+      "aVertexTextureCoords"
+    );
 
     camera = new Camera();
     camera.setLocation(0, 2, 10);
@@ -33,6 +37,8 @@ function App(ch, lh, dh) {
     uPMatrix = gl.getUniformLocation(program, "uPMatrix");
     uPerVertexColor = gl.getUniformLocation(program, "uPerVertexColor");
     uColor = gl.getUniformLocation(program, "uColor");
+    uUseTexture = gl.getUniformLocation(program, "uUseTexture");
+    uSampler = gl.getUniformLocation(program, "uSampler");
 
     Floor.build(40, 20);
     Scene.addObject(Floor);
@@ -187,6 +193,12 @@ function App(ch, lh, dh) {
       } else {
         gl.uniform1i(uPerVertexColor, false);
         gl.uniform4fv(uColor, object.color);
+      }
+
+      if (object.useTexture) {
+        gl.uniform1i(uUseTexture, true);
+      } else {
+        gl.uniform1i(uUseTexture, false);
       }
 
       // gl.disableVertexAttribArray(aVertexColor);

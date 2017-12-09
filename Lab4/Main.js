@@ -16,6 +16,9 @@ var aVertexColor = null;
 var aVertexPosition = null;
 var uPerVertexColor = null;
 var uColor = null;
+var uUseTexture = null;
+var uSampler = null;
+var aVertexTextureCoords = null;
 
 window.onload = main;
 
