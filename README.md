@@ -35,6 +35,8 @@
 
 - 鼠标跟踪球算法
 
+### 实验最终效果
+
 ![实验成果图](https://raw.githubusercontent.com/Dokyme/ComputerGraphicsLab/master/Lab2/Snipaste_2017-11-16_01-22-13.png)
 
 
@@ -53,3 +55,7 @@
 
 - 自动沿规划路径运动（对象或相机）
 - 给一个对象加上简单阴影
+
+### 实验最终效果
+
+链接(https://www.dokyme.cn/Lab3/main.html)
