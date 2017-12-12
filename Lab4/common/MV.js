@@ -382,8 +382,7 @@ function rotateX(theta) {
     c,
     s,
     0.0,
-    0.0,
-    -s,
+    0.0, -s,
     c,
     0.0,
     0.0,
@@ -393,13 +392,13 @@ function rotateX(theta) {
   );
   return rx;
 }
+
 function rotateY(theta) {
   var c = Math.cos(radians(theta));
   var s = Math.sin(radians(theta));
   var ry = mat4(
     c,
-    0.0,
-    -s,
+    0.0, -s,
     0.0,
     0.0,
     1.0,
@@ -416,6 +415,7 @@ function rotateY(theta) {
   );
   return ry;
 }
+
 function rotateZ(theta) {
   var c = Math.cos(radians(theta));
   var s = Math.sin(radians(theta));
@@ -423,8 +423,7 @@ function rotateZ(theta) {
     c,
     s,
     0.0,
-    0.0,
-    -s,
+    0.0, -s,
     c,
     0.0,
     0.0,
@@ -942,6 +941,7 @@ function inverse4(m) {
 
   return a;
 }
+
 function inverse(m) {
   if (m.matrix != true) console.log("not a matrix");
   if (m.length == 2) return inverse2(m);
@@ -955,7 +955,8 @@ function normalMatrix(m, flag) {
   if (flag != true) return a;
   else {
     var b = mat3();
-    for (var i = 0; i < 3; i++) for (var j = 0; j < 3; j++) b[i][j] = a[i][j];
+    for (var i = 0; i < 3; i++)
+      for (var j = 0; j < 3; j++) b[i][j] = a[i][j];
     return b;
   }
 }
