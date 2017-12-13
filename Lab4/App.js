@@ -171,6 +171,17 @@ function App(ch, lh, dh) {
     );
   };
 
+  this.updateLight(object)=()=>{
+    var ambientProduct=mult(lightAmbient,object.materialAmbient);
+    var diffuseProduct=mult(lightDiffuse,object.materialDiffuse);
+    var specularProduct=mult(lightSpecular,object.materialSpecular);
+
+    gl.uniform4fv(uAmbientProduct,ambientProduct);
+    gl.uniform4fv(uDiffuseProduct,diffuseProduct);
+    gl.uniform4fv(uSpecularProduct,specularProduct);
+    gl.uniform1f(uShininess,object.shininess);
+  };
+
   this.updateMatrixUniforms = () => {
     perspectiveMatrix = perspective(
       50,
@@ -195,6 +206,9 @@ function App(ch, lh, dh) {
     for (var i = 0; i < Scene.objects.length; i++) {
       var object = Scene.objects[i];
 
+      //传递该对象的光照属性。
+      this.updateLight(object);
+
       if (!object.perVertexColor) {
         object.perVertexColor = false;
       }
@@ -208,7 +222,8 @@ function App(ch, lh, dh) {
       gl.uniform1i(uWireframe, object.wireframe);
       gl.uniform1i(uPerVertexColor, object.perVertexColor);
       gl.uniform1i(uUseTexture, object.useTexture);
-
+      
+      //如果该对象定义了变换矩阵，则进行变换。
       if (object.transformMatrix) {
         gl.uniformMatrix4fv(uTMatrix, false, flatten(object.transformMatrix));
       } else {
