@@ -39,6 +39,14 @@ function App(ch, lh, dh) {
     uColor = gl.getUniformLocation(program, "uColor");
     uUseTexture = gl.getUniformLocation(program, "uUseTexture");
     uSampler = gl.getUniformLocation(program, "uSampler");
+    uLightPosition = gl.getUniformLocation(program, "uLightPosition");
+    uNMatrix = gl.getUniformLocation(program, "uNMatrix");
+    uWireframe = gl.getUniformLocation(program, "uWireframe");
+    aVertexNormal = gl.getUniformLocation(program, "aVertexNormal");
+    uAmbientProduct = gl.getUniformLocation(program, "uAmbientProduct");
+    uDiffuseProduct = gl.getUniformLocation(program, "uDiffuseProduct");
+    uSpecularProduct = gl.getUniformLocation(program, "uSpecularProduct");
+    uShininess = gl.getUniformLocation(program, "uShininess");
 
     Floor.build(40, 20);
     Scene.addObject(Floor);
@@ -117,7 +125,7 @@ function App(ch, lh, dh) {
     document.getElementById("out").onclick = () => {
       camera.dollyout();
     };
-    document.onkeydown = function(event) {
+    document.onkeydown = event => {
       var e = event || window.event || arguments.callee.caller.arguments[0];
       var dx =
         key_move *
@@ -130,13 +138,25 @@ function App(ch, lh, dh) {
       var dy = -key_move * Math.sin(radians(-camera.elevation));
 
       if (e && e.keyCode == 37) {
-        camera.changeAzimuth(-1);
+        // camera.changeAzimuth(-1);
+        console.log("37");
+        Light.lightPosition[0] -= 0.5;
+        this.draw();
       } else if (e && e.keyCode == 38) {
-        camera.changeElevation(-1);
+        // camera.changeElevation(-1);
+        console.log("37");
+        Light.lightPosition[1] += 0.5;
+        this.draw();
       } else if (e && e.keyCode == 39) {
-        camera.changeAzimuth(+1);
+        console.log("39");
+        Light.lightPosition[0] += 0.5;
+        this.draw();
+        // camera.changeAzimuth(+1);
       } else if (e && e.keyCode == 40) {
-        camera.changeElevation(+1);
+        // camera.changeElevation(+1);
+        console.log("37");
+        Light.lightPosition[1] -= 0.5;
+        this.draw();
       } else if (e && e.keyCode == 87) {
         camera.setLocation(
           vec3(
@@ -167,6 +187,26 @@ function App(ch, lh, dh) {
     );
   };
 
+  this.updateLight = object => {
+    if (object.materialAmbient) {
+      var ambientProduct = mult(Light.lightAmbient, object.materialAmbient);
+      var diffuseProduct = mult(Light.lightDiffuse, object.materialDiffuse);
+      var specularProduct = mult(Light.lightSpecular, object.materialSpecular);
+
+      gl.uniform4fv(uAmbientProduct, ambientProduct);
+      gl.uniform4fv(uDiffuseProduct, diffuseProduct);
+      gl.uniform4fv(uSpecularProduct, specularProduct);
+      gl.uniform1f(uShininess, object.shininess);
+
+      gl.uniform4fv(uLightPosition, Light.lightPosition);
+    } else {
+      gl.uniform4fv(uAmbientProduct, vec4());
+      gl.uniform4fv(uDiffuseProduct, vec4());
+      gl.uniform4fv(uSpecularProduct, vec4());
+      gl.uniform1f(uShininess, 100);
+    }
+  };
+
   this.updateMatrixUniforms = () => {
     perspectiveMatrix = perspective(
       50,
@@ -176,6 +216,14 @@ function App(ch, lh, dh) {
     );
     gl.uniformMatrix4fv(uMVMatrix, false, flatten(camera.getViewTransform()));
     gl.uniformMatrix4fv(uPMatrix, false, flatten(perspectiveMatrix));
+
+    var modelViewMatrix = camera.getViewTransform();
+    normalMatrix = [
+      vec3(modelViewMatrix[0][0], modelViewMatrix[0][1], modelViewMatrix[0][2]),
+      vec3(modelViewMatrix[1][0], modelViewMatrix[1][1], modelViewMatrix[1][2]),
+      vec3(modelViewMatrix[2][0], modelViewMatrix[2][1], modelViewMatrix[2][2])
+    ];
+    gl.uniformMatrix3fv(uNMatrix, false, flatten(normalMatrix));
   };
 
   this.draw = () => {
@@ -188,25 +236,24 @@ function App(ch, lh, dh) {
     for (var i = 0; i < Scene.objects.length; i++) {
       var object = Scene.objects[i];
 
-      if (object.perVertexColor) {
-        gl.uniform1i(uPerVertexColor, object.perVertexColor);
-      } else {
-        gl.uniform1i(uPerVertexColor, false);
-        gl.uniform4fv(uColor, object.color);
+      //传递该对象的光照属性。
+      this.updateLight(object);
+
+      if (!object.perVertexColor) {
+        object.perVertexColor = false;
+      }
+      if (!object.wireframe) {
+        object.wireframe = false;
+      }
+      if (!object.useTexture) {
+        object.useTexture = false;
       }
 
-      if (object.useTexture) {
-        gl.uniform1i(uUseTexture, true);
-      } else {
-        gl.uniform1i(uUseTexture, false);
-      }
+      gl.uniform1i(uWireframe, object.wireframe);
+      gl.uniform1i(uPerVertexColor, object.perVertexColor);
+      gl.uniform1i(uUseTexture, object.useTexture);
 
-      // gl.disableVertexAttribArray(aVertexColor);
-
-      gl.bindBuffer(gl.ARRAY_BUFFER, object.vbo);
-      gl.vertexAttribPointer(aVertexPosition, 3, gl.FLOAT, false, 0, 0);
-      gl.enableVertexAttribArray(aVertexPosition);
-
+      //如果该对象定义了变换矩阵，则进行变换。
       if (object.transformMatrix) {
         gl.uniformMatrix4fv(uTMatrix, false, flatten(object.transformMatrix));
       } else {
@@ -217,13 +264,28 @@ function App(ch, lh, dh) {
         gl.bindBuffer(gl.ARRAY_BUFFER, object.cbo);
         gl.vertexAttribPointer(aVertexColor, 4, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(aVertexColor);
+      } else {
+        gl.uniform4fv(uColor, object.color);
       }
+
+      //如果不是线框图，就传顶点法向量buffer。
+      if (!object.wireframe) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, object.nbo);
+        gl.vertexAttribPointer(aVertexNormal, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(aVertexNormal);
+      }
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, object.vbo);
+      gl.vertexAttribPointer(aVertexPosition, 3, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(aVertexPosition);
 
       if (object.ibo) {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, object.ibo);
         if (object.wireframe) {
+          //如果是相框图，LINES。
           gl.drawElements(gl.LINES, object.indicesNum, gl.UNSIGNED_SHORT, 0);
         } else {
+          //如果不是线框图，TRIANGLES。
           gl.drawElements(
             gl.TRIANGLES,
             object.indicesNum,
@@ -232,6 +294,7 @@ function App(ch, lh, dh) {
           );
         }
       } else {
+        //没有ibo，根据vbo，drawArrays
         gl.drawArrays(gl.TRIANGLES, 0, object.vertexNum);
       }
 
