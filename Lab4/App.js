@@ -125,7 +125,7 @@ function App(ch, lh, dh) {
     document.getElementById("out").onclick = () => {
       camera.dollyout();
     };
-    document.onkeydown = function(event) {
+    document.onkeydown = event => {
       var e = event || window.event || arguments.callee.caller.arguments[0];
       var dx =
         key_move *
@@ -138,13 +138,25 @@ function App(ch, lh, dh) {
       var dy = -key_move * Math.sin(radians(-camera.elevation));
 
       if (e && e.keyCode == 37) {
-        camera.changeAzimuth(-1);
+        // camera.changeAzimuth(-1);
+        console.log("37");
+        Light.lightPosition[0] -= 0.5;
+        this.draw();
       } else if (e && e.keyCode == 38) {
-        camera.changeElevation(-1);
+        // camera.changeElevation(-1);
+        console.log("37");
+        Light.lightPosition[1] += 0.5;
+        this.draw();
       } else if (e && e.keyCode == 39) {
-        camera.changeAzimuth(+1);
+        console.log("39");
+        Light.lightPosition[0] += 0.5;
+        this.draw();
+        // camera.changeAzimuth(+1);
       } else if (e && e.keyCode == 40) {
-        camera.changeElevation(+1);
+        // camera.changeElevation(+1);
+        console.log("37");
+        Light.lightPosition[1] -= 0.5;
+        this.draw();
       } else if (e && e.keyCode == 87) {
         camera.setLocation(
           vec3(

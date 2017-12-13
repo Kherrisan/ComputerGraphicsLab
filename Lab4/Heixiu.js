@@ -1,4 +1,9 @@
 function Heixiu() {
+  //材质属性
+  this.materialAmbient = vec4(1.0, 0.0, 1.0, 1.0);
+  this.materialDiffuse = vec4(1.0, 0.0, 0.0, 1.0);
+  this.materialSpecular = vec4(1.0, 1.0, 0.0, 1.0);
+  this.shininess = 10.0;
   this.FORWARD_STEP = 0.5;
   this.ROTATE_STEP = 5;
   this.RESIZE_STEP = 0.1;
@@ -21,6 +26,7 @@ Heixiu.prototype.setLocation = function(a, b, c) {
 
 Heixiu.prototype.build = function() {
   var vertices = [];
+  var normals=[];
   //init shape_data
   var shape_data = {
     origin: vec3(0, 0, 0),
@@ -30,8 +36,9 @@ Heixiu.prototype.build = function() {
     color: vec4(0, 0, 0, 1)
   };
   var body_vertices = ellipsoid_generator(shape_data);
-  vertices = vertices.concat(body_vertices);
-  var colors = generateColors(body_vertices.length, shape_data["color"]);
+  vertices = vertices.concat(body_vertices.vertexPoint);
+  var colors = generateColors(body_vertices.vertexPoint.length, shape_data["color"]);
+  normals=normals.concat(body_vertices.normals);
   //ears shape_data inition.
   shape_data.axis_length = vec2(this.size * 1.5, this.size * 1.5);
   shape_data.angle_range_vertical = vec3(0, 2 * this.size + 0.5, 0);
@@ -39,22 +46,24 @@ Heixiu.prototype.build = function() {
   var rightear_vertices = taper_generator(shape_data);
   this.constructMatrix(
     mult(translate(-this.size * 2.5, this.size * 2, 0), rotateZ(-20)),
-    rightear_vertices
+    rightear_vertices.vertexPoint
   );
-  vertices = vertices.concat(rightear_vertices);
+  vertices = vertices.concat(rightear_vertices.vertexPoint);
   colors = colors.concat(
-    generateColors(rightear_vertices.length, shape_data["color"])
+    generateColors(rightear_vertices.vertexPoint.length, shape_data["color"])
   );
+  normals=normals.concat(rightear_vertices.normals);
   //set and get left ear vertices.
   var leftear_vertices = taper_generator(shape_data);
   this.constructMatrix(
     mult(translate(this.size * 2.5, this.size * 2, 0), rotateZ(20)),
-    leftear_vertices
+    leftear_vertices.vertexPoint
   );
-  vertices = vertices.concat(leftear_vertices);
+  vertices = vertices.concat(leftear_vertices.vertexPoint);
   colors = colors.concat(
-    generateColors(leftear_vertices.length, shape_data["color"])
+    generateColors(leftear_vertices.vertexPoint.length, shape_data["color"])
   );
+  normals=normals.concat(leftear_vertices.normals);
 
   this.vertexNum = vertices.length;
   this.vbo = gl.createBuffer();
@@ -65,6 +74,11 @@ Heixiu.prototype.build = function() {
   this.cbo = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, this.cbo);
   gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+  this.nbo = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.nbo);
+  gl.bufferData(gl.ARRAY_BUFFER, flatten(normals), gl.STATIC_DRAW);
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
   this.updateTransformMatrix();
