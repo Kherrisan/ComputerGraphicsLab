@@ -21,11 +21,9 @@
         uniform vec4 uColor;
         attribute vec3 aVertexPosition;
         attribute vec4 aVertexColor;
-        attribute vec2 aVertexTextureCoords;
-        varying vec2 vVertextureCoords;
-        varying vec4 fColor;
         void main()
         {
+            vec4 fColor;
             gl_Position = uPMatrix * uMVMatrix * uTMatrix * vec4(aVertexPosition, 1.0);
             if (uPerVertexColor)
             {
@@ -35,7 +33,6 @@
             {
                 fColor = uColor;
             }
-            vVertextureCoords = aVertexTextureCoords;
 
             vec3 pos =  (uMVMatrix * uTMatrix * vec4(aVertexPosition, 1.0)).xyz;
             // check for directional light
@@ -43,7 +40,7 @@
             else L = normalize( uLightPosition.xyz - pos );
 
             E = -normalize(pos);
-            N = normalize( uNMatrix*(uTMatrix*aVertexNormal).xyz);
+            N = normalize( uNMatrix*aVertexNormal.xyz);
             
         }
     </script>
@@ -56,36 +53,32 @@
         uniform vec4 uSpecularProduct;
         uniform float uShininess;
         varying vec3 N,L,E;
-        uniform bool uUseTexture;
-        uniform sampler2D uSampler;
-        varying vec4 fColor;
-        varying vec2 vVertextureCoords;
         void main() { 
+            vec4 fColor;
 
             vec3 H = normalize( L + E );
-            vec4 ambient = ambientProduct;
+            vec4 ambient = uAmbientProduct;
         
             float Kd = max( dot(L, N), 0.0 );
-            vec4  diffuse = Kd*diffuseProduct;
+            vec4  diffuse = Kd*uDiffuseProduct;
         
-            float Ks = pow( max(dot(N, H), 0.0), shininess );
-            vec4  specular = Ks * specularProduct;
+            float Ks = pow( max(dot(N, H), 0.0), uShininess );
+            vec4  specular = Ks * uSpecularProduct;
             
             if( dot(L, N) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
             fColor = ambient+diffuse+specular;
             fColor.a = 1.0;
             
-            if(uUseTexture){
-                gl_FragColor=texture2D(uSampler,vVertextureCoords);
-            }else{
-                gl_FragColor = fColor;
-            }
+
+            gl_FragColor = fColor;
+            
              }
     </script>
 
     <script type="text/javascript" src="./common/webgl-utils.js"></script>
     <script type="text/javascript" src="./common/initShaders.js"></script>
     <script type="text/javascript" src="./common/MV.js"></script>
+    <script type="text/javascript" src="./light.js"></script>
     <script type="text/javascript" src="./Camera.js"></script>
     <script type="text/javascript" src="./CameraInteractor.js"></script>
     <script type="text/javascript" src="./Floor.js"></script>

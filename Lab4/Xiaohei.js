@@ -1,4 +1,9 @@
 var Xiaohei = {
+  //材质属性
+  materialAmbient:vec4(1.0,0.0,1.0,1.0),
+  materialDiffuse:vec4(1.0,0.0,0.0,1.0),
+  materialSpecular:vec4(1.0,1.0,0.0,1.0),
+  shininess:10.0,
   // CurModelViewMatrix: mat4(), //当前变换矩阵
   FORWARD_STEP: 0.2, //平移步长
   ROTATE_STEP: 5,
@@ -8,6 +13,7 @@ var Xiaohei = {
   position: vec3(0, 1.8, 0), //the location of the center point of this animal.
   vbo: null,
   cbo: null,
+  nbo: null,
   size: 0.5,
   vertexNum: 0,
   // wireframe: false,
@@ -16,7 +22,8 @@ var Xiaohei = {
   perVertexColor: true,
   build: () => {
     var vertices = [];
-    var colors=[];
+    var normals = [];
+    var colors = [];
 
     //init shape_data
     var shape_data = {
@@ -44,12 +51,13 @@ var Xiaohei = {
     var leftear_vertices = taper_generator(shape_data);
     Xiaohei.constructMatrix(
       translate(-Xiaohei.size * 0.1, +Xiaohei.size * 0.5, 0),
-      leftear_vertices
+      leftear_vertices.vertexPoint
     );
-    vertices = vertices.concat(leftear_vertices);
+    vertices = vertices.concat(leftear_vertices.vertexPoint);
     colors = colors.concat(
-      generateColors(leftear_vertices.length, shape_data["color"])
+      generateColors(leftear_vertices.vertexPoint.length, shape_data["color"])
     );
+    normals = normals.concat(leftear_vertices.normals);
 
     // generate inner left ear vertices and colors
     shape_data.angle_range_vertical = vec3(
@@ -62,12 +70,13 @@ var Xiaohei = {
     var inner_leftear_vertices = taper_generator(shape_data);
     Xiaohei.constructMatrix(
       translate(-Xiaohei.size * 0.1, +Xiaohei.size * 0.5, 0),
-      inner_leftear_vertices
+      inner_leftear_vertices.vertexPoint
     );
-    vertices = vertices.concat(inner_leftear_vertices);
+    vertices = vertices.concat(inner_leftear_vertices.vertexPoint);
     colors = colors.concat(
-      generateColors(inner_leftear_vertices.length, shape_data["color"])
+      generateColors(inner_leftear_vertices.vertexPoint.length, shape_data["color"])
     );
+    normals = normals.concat(inner_leftear_vertices.normals);
 
     //generate right ear vertices and colors
     shape_data.angle_range_horizontal = vec2(0, 360);
@@ -81,12 +90,13 @@ var Xiaohei = {
     var rightear_vertices = taper_generator(shape_data);
     Xiaohei.constructMatrix(
       translate(+Xiaohei.size * 0.1, +Xiaohei.size * 0.5, 0),
-      rightear_vertices
+      rightear_vertices.vertexPoint
     );
-    vertices = vertices.concat(rightear_vertices);
+    vertices = vertices.concat(rightear_vertices.vertexPoint);
     colors = colors.concat(
-      generateColors(rightear_vertices.length, shape_data["color"])
+      generateColors(rightear_vertices.vertexPoint.length, shape_data["color"])
     );
+    normals = normals.concat(rightear_vertices.normals);
 
     // generate inner right ear vertices and colors
     shape_data.angle_range_vertical = vec3(
@@ -99,12 +109,13 @@ var Xiaohei = {
     var inner_rightear_vertices = taper_generator(shape_data);
     Xiaohei.constructMatrix(
       translate(+Xiaohei.size * 0.1, +Xiaohei.size * 0.5, 0),
-      inner_rightear_vertices
+      inner_rightear_vertices.vertexPoint
     );
-    vertices = vertices.concat(inner_rightear_vertices);
+    vertices = vertices.concat(inner_rightear_vertices.vertexPoint);
     colors = colors.concat(
-      generateColors(inner_rightear_vertices.length, shape_data["color"])
+      generateColors(inner_rightear_vertices.vertexPoint.length, shape_data["color"])
     );
+    normals = normals.concat(inner_rightear_vertices.normals);
 
     shape_data = {
       origin: vec3(0, 0, 0),
@@ -122,8 +133,11 @@ var Xiaohei = {
 
     //generate head vertices and colors
     var head_vertices = ellipsoid_generator(shape_data);
-    vertices = vertices.concat(head_vertices);
-    colors = colors.concat(generateColors(head_vertices.length, shape_data["color"]));
+    vertices = vertices.concat(head_vertices.vertexPoint);
+    colors = colors.concat(
+      generateColors(head_vertices.vertexPoint.length, shape_data["color"])
+    );
+    normals = normals.concat(head_vertices.normals);
 
     //generate body vertices and colors
     shape_data.axis_length = vec3(
@@ -134,12 +148,13 @@ var Xiaohei = {
     var body_vertices = ellipsoid_generator(shape_data);
     Xiaohei.constructMatrix(
       translate(0, -Xiaohei.size * 3.5, -Xiaohei.size * 4.5),
-      body_vertices
+      body_vertices.vertexPoint
     );
-    vertices = vertices.concat(body_vertices);
+    vertices = vertices.concat(body_vertices.vertexPoint);
     colors = colors.concat(
-      generateColors(body_vertices.length, shape_data["color"])
+      generateColors(body_vertices.vertexPoint.length, shape_data["color"])
     );
+    normals = normals.concat(body_vertices.normals);
 
     //generate hand vertices and colors
     shape_data.angle_range_horizontal = vec2(0, 360);
@@ -152,12 +167,14 @@ var Xiaohei = {
         mult(rotateZ(15), rotateX(15)),
         translate(-Xiaohei.size * 0.2, -Xiaohei.size * 5, -Xiaohei.size * 3)
       ),
-      lefthand_vertices
+      lefthand_vertices.vertexPoint
     );
-    vertices = vertices.concat(lefthand_vertices);
+    vertices = vertices.concat(lefthand_vertices.vertexPoint);
     colors = colors.concat(
-      generateColors(lefthand_vertices.length, shape_data["color"])
+      generateColors(lefthand_vertices.vertexPoint.length, shape_data["color"])
     );
+    normals = normals.concat(lefthand_vertices.normals);
+
     //right hand
     var righthand_vertices = cylinder_generator(shape_data);
     Xiaohei.constructMatrix(
@@ -165,12 +182,14 @@ var Xiaohei = {
         mult(rotateZ(-15), rotateX(15)),
         translate(+Xiaohei.size * 0.2, -Xiaohei.size * 5, -Xiaohei.size * 3)
       ),
-      righthand_vertices
+      righthand_vertices.vertexPoint
     );
-    vertices = vertices.concat(righthand_vertices);
+    vertices = vertices.concat(righthand_vertices.vertexPoint);
     colors = colors.concat(
-      generateColors(righthand_vertices.length, shape_data["color"])
+      generateColors(righthand_vertices.vertexPoint.length, shape_data["color"])
     );
+    normals = normals.concat(righthand_vertices.normals);
+
     //generate foot vertices and colors
     shape_data.height = Xiaohei.size * 3; //length
     shape_data.axis_length = vec2(Xiaohei.size * 0.8, Xiaohei.size * 0.8);
@@ -180,12 +199,14 @@ var Xiaohei = {
         mult(rotateZ(15), rotateX(15)),
         translate(-Xiaohei.size * 0, -Xiaohei.size * 4, -Xiaohei.size * 7.5)
       ),
-      leftfoot_vertices
+      leftfoot_vertices.vertexPoint
     );
-    vertices = vertices.concat(leftfoot_vertices);
+    vertices = vertices.concat(leftfoot_vertices.vertexPoint);
     colors = colors.concat(
-      generateColors(leftfoot_vertices.length, shape_data["color"])
+      generateColors(leftfoot_vertices.vertexPoint.length, shape_data["color"])
     );
+    normals = normals.concat(leftfoot_vertices.normals);
+
     //right foot
     var rightfoot_vertices = cylinder_generator(shape_data);
     Xiaohei.constructMatrix(
@@ -193,12 +214,13 @@ var Xiaohei = {
         mult(rotateZ(-15), rotateX(15)),
         translate(+Xiaohei.size * 0, -Xiaohei.size * 4, -Xiaohei.size * 7.5)
       ),
-      rightfoot_vertices
+      rightfoot_vertices.vertexPoint
     );
-    vertices = vertices.concat(rightfoot_vertices);
+    vertices = vertices.concat(rightfoot_vertices.vertexPoint);
     colors = colors.concat(
-      generateColors(rightfoot_vertices.length, shape_data["color"])
+      generateColors(rightfoot_vertices.vertexPoint.length, shape_data["color"])
     );
+    normals = normals.concat(rightfoot_vertices.normals);
 
     Xiaohei.vertexNum = vertices.length;
     Xiaohei.vbo = gl.createBuffer();
@@ -209,6 +231,11 @@ var Xiaohei = {
     Xiaohei.cbo = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, Xiaohei.cbo);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    Xiaohei.nbo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, Xiaohei.nbo);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(normals), gl.STATIC_DRAW);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
     Xiaohei.updateTransformMatrix();

@@ -95,6 +95,14 @@ function draw_taper(vertices,colors, rotate_mat) {
   // }
 }
 
+function get_ellipsoid_normals(a, b, c, abias, bbias, cbias, p){
+  return vec3(
+       Math.sqrt(a * a + b * b + c * c)/ 2 / Math.sqrt(Math.pow(p[0] - abias, 2) + Math.pow(p[1] - cbias, 2) + Math.pow(p[2] - bbias, 2)) * 2 * (p[0] - abias) / a / a,
+       Math.sqrt(a * a + b * b + c * c)/ 2 / Math.sqrt(Math.pow(p[0] - abias, 2) + Math.pow(p[1] - cbias, 2) + Math.pow(p[2] - bbias, 2)) * 2 * (p[1] - cbias) / c / c,
+       Math.sqrt(a * a + b * b + c * c)/ 2 / Math.sqrt(Math.pow(p[0] - abias, 2) + Math.pow(p[1] - cbias, 2) + Math.pow(p[2] - bbias, 2)) * 2 * (p[2] - bbias) / b / b);
+}
+
+
 function renderPoints(vertices, colors, mat) {
   var colorBuffer = gl.createBuffer();
   // gl.clear(gl.COLOR_BUFFER_BIT);
@@ -200,7 +208,7 @@ function ellipsoid_generator(shape_data) {
     
     return {
     vertexPoint: points,
-    vertexNormal: normals
+    normals: normals
     };
 }
 
@@ -235,7 +243,10 @@ function taper_generator(shape_data) {
     normals.push(normal);
   }
 
-  return points;
+  return {
+    vertexPoint: points,
+    normals: normals
+    };
 }
 
 function cylinder_generator(shape_data) {
@@ -282,7 +293,10 @@ function cylinder_generator(shape_data) {
     normals.push(normal);
   }
 
-  return points;
+  return {
+    vertexPoint: points,
+    normals: normals
+    };
 }
 
 function generateColors(count, color) {

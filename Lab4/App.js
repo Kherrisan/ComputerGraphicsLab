@@ -43,6 +43,10 @@ function App(ch, lh, dh) {
     uNMatrix = gl.getUniformLocation(program, "uNMatrix");
     uWireframe = gl.getUniformLocation(program, "uWireframe");
     aVertexNormal = gl.getUniformLocation(program, "aVertexNormal");
+    uAmbientProduct = gl.getUniformLocation(program, "uAmbientProduct");
+    uDiffuseProduct = gl.getUniformLocation(program, "uDiffuseProduct");
+    uSpecularProduct = gl.getUniformLocation(program, "uSpecularProduct");
+    uShininess = gl.getUniformLocation(program, "uShininess");
 
     Floor.build(40, 20);
     Scene.addObject(Floor);
@@ -171,15 +175,24 @@ function App(ch, lh, dh) {
     );
   };
 
-  this.updateLight(object)=()=>{
-    var ambientProduct=mult(lightAmbient,object.materialAmbient);
-    var diffuseProduct=mult(lightDiffuse,object.materialDiffuse);
-    var specularProduct=mult(lightSpecular,object.materialSpecular);
+  this.updateLight = object => {
+    if (object.materialAmbient) {
+      var ambientProduct = mult(Light.lightAmbient, object.materialAmbient);
+      var diffuseProduct = mult(Light.lightDiffuse, object.materialDiffuse);
+      var specularProduct = mult(Light.lightSpecular, object.materialSpecular);
 
-    gl.uniform4fv(uAmbientProduct,ambientProduct);
-    gl.uniform4fv(uDiffuseProduct,diffuseProduct);
-    gl.uniform4fv(uSpecularProduct,specularProduct);
-    gl.uniform1f(uShininess,object.shininess);
+      gl.uniform4fv(uAmbientProduct, ambientProduct);
+      gl.uniform4fv(uDiffuseProduct, diffuseProduct);
+      gl.uniform4fv(uSpecularProduct, specularProduct);
+      gl.uniform1f(uShininess, object.shininess);
+
+      gl.uniform4fv(uLightPosition, Light.lightPosition);
+    } else {
+      gl.uniform4fv(uAmbientProduct, vec4());
+      gl.uniform4fv(uDiffuseProduct, vec4());
+      gl.uniform4fv(uSpecularProduct, vec4());
+      gl.uniform1f(uShininess, 100);
+    }
   };
 
   this.updateMatrixUniforms = () => {
@@ -192,8 +205,13 @@ function App(ch, lh, dh) {
     gl.uniformMatrix4fv(uMVMatrix, false, flatten(camera.getViewTransform()));
     gl.uniformMatrix4fv(uPMatrix, false, flatten(perspectiveMatrix));
 
-    nMatrix = normalMatrix(camera.getViewTransform());
-    gl.uniform4fv(uNMatrix, false, nMatrix);
+    var modelViewMatrix = camera.getViewTransform();
+    normalMatrix = [
+      vec3(modelViewMatrix[0][0], modelViewMatrix[0][1], modelViewMatrix[0][2]),
+      vec3(modelViewMatrix[1][0], modelViewMatrix[1][1], modelViewMatrix[1][2]),
+      vec3(modelViewMatrix[2][0], modelViewMatrix[2][1], modelViewMatrix[2][2])
+    ];
+    gl.uniformMatrix3fv(uNMatrix, false, flatten(normalMatrix));
   };
 
   this.draw = () => {
@@ -222,7 +240,7 @@ function App(ch, lh, dh) {
       gl.uniform1i(uWireframe, object.wireframe);
       gl.uniform1i(uPerVertexColor, object.perVertexColor);
       gl.uniform1i(uUseTexture, object.useTexture);
-      
+
       //如果该对象定义了变换矩阵，则进行变换。
       if (object.transformMatrix) {
         gl.uniformMatrix4fv(uTMatrix, false, flatten(object.transformMatrix));
@@ -239,13 +257,12 @@ function App(ch, lh, dh) {
       }
 
       //如果不是线框图，就传顶点法向量buffer。
-      if(!object.wireframe){
-        gl.bindBuffer(gl.ARRAY_BUFFER,object.nbo);
-        gl.vertexAttribPointer(aVertexNormal,3,gl.FLOAT,false,0,0);
+      if (!object.wireframe) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, object.nbo);
+        gl.vertexAttribPointer(aVertexNormal, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(aVertexNormal);
       }
 
-      //传color buffer。
       gl.bindBuffer(gl.ARRAY_BUFFER, object.vbo);
       gl.vertexAttribPointer(aVertexPosition, 3, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(aVertexPosition);
