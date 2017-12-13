@@ -18,7 +18,7 @@ var Floor = {
       v[6 * iline] = -Floor.halfWidth;
       v[6 * iline + 1] = 0;
       v[6 * iline + 2] = -Floor.halfWidth + iline * delta;
-
+        
       //右侧顶点坐标，与左侧相连形成水平线
       v[6 * iline + 3] = Floor.halfWidth;
       v[6 * iline + 4] = 0;
