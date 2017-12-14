@@ -1,9 +1,9 @@
 var Xiaohei = {
   //材质属性
-  materialAmbient:vec4(1.0,0.0,1.0,1.0),
-  materialDiffuse:vec4(1.0,0.0,0.0,1.0),
-  materialSpecular:vec4(1.0,1.0,0.0,1.0),
-  shininess:10.0,
+  materialAmbient:vec4(0.1,0.1,0.1,1.0),
+  materialDiffuse:vec4(0.2,0.2,0.2,1.0),
+  materialSpecular:vec4(0.01,0.01,0.01,1.0),
+  shininess:1.0,
   // CurModelViewMatrix: mat4(), //当前变换矩阵
   FORWARD_STEP: 0.2, //平移步长
   ROTATE_STEP: 5,
