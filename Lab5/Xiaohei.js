@@ -1,9 +1,9 @@
 var Xiaohei = {
   //材质属性
-  materialAmbient:vec4(0.1,0.1,0.1,1.0),
-  materialDiffuse:vec4(0.2,0.2,0.2,1.0),
-  materialSpecular:vec4(0.01,0.01,0.01,1.0),
-  shininess:1.0,
+  materialAmbient: vec4(0.1, 0.1, 0.1, 1.0),
+  materialDiffuse: vec4(0.2, 0.2, 0.2, 1.0),
+  materialSpecular: vec4(0.01, 0.01, 0.01, 1.0),
+  shininess: 1.0,
   // CurModelViewMatrix: mat4(), //当前变换矩阵
   FORWARD_STEP: 0.2, //平移步长
   ROTATE_STEP: 5,
@@ -74,7 +74,10 @@ var Xiaohei = {
     );
     vertices = vertices.concat(inner_leftear_vertices.vertexPoint);
     colors = colors.concat(
-      generateColors(inner_leftear_vertices.vertexPoint.length, shape_data["color"])
+      generateColors(
+        inner_leftear_vertices.vertexPoint.length,
+        shape_data["color"]
+      )
     );
     normals = normals.concat(inner_leftear_vertices.normals);
 
@@ -113,7 +116,10 @@ var Xiaohei = {
     );
     vertices = vertices.concat(inner_rightear_vertices.vertexPoint);
     colors = colors.concat(
-      generateColors(inner_rightear_vertices.vertexPoint.length, shape_data["color"])
+      generateColors(
+        inner_rightear_vertices.vertexPoint.length,
+        shape_data["color"]
+      )
     );
     normals = normals.concat(inner_rightear_vertices.normals);
 
@@ -241,9 +247,6 @@ var Xiaohei = {
     Xiaohei.updateTransformMatrix();
   },
   constructMatrix: function(matrix, vertices) {
-    //This function transform each part of the object by multiply vertices with translate matrix or rotate matrix,
-    //So each part should be in the right position of the object.
-    //For example,your left hand should be in your left,away from your heart about 0.5*width of your body.
     for (var i = 0; i < vertices.length; i++) {
       var temp = mult(
         matrix,
@@ -311,3 +314,182 @@ var Xiaohei = {
     }
   }
 };
+
+function XiaoheiInnerEar(xiaohei, relativePosition, relativeAttritude) {
+  this.parent = xiaohei;
+  this.materialAmbient = vec4();
+  this.materialDiffuse = vec4();
+  this.materialSpecular = vec4();
+  this.shininess = 1.0;
+  this.relativePosition = relativePosition;
+  this.relativeAttritude = relativeAttritude;
+  this.vbo = null;
+  this.cbo = null;
+  this.nbo = null;
+  this.vertexNum = 0;
+
+  this.draw = function() {};
+}
+
+function XiaoheiBackLeg(xiaohei, relativePosition, relativeAttritude) {
+  this.parent = xiaohei;
+  this.materialAmbient = vec4();
+  this.materialDiffuse = vec4();
+  this.materialSpecular = vec4();
+  this.shininess = 1.0;
+  this.relativePosition = relativePosition;
+  this.relativeAttritude = relativeAttritude;
+  this.vbo = null;
+  this.cbo = null;
+  this.nbo = null;
+  this.vertexNum = 0;
+
+  this.draw = function() {};
+}
+
+function XiaoheiFrontLeg(xiaohei, relativePosition, relativeAttritude) {
+  this.parent = xiaohei;
+  this.materialAmbient = vec4();
+  this.materialDiffuse = vec4();
+  this.materialSpecular = vec4();
+  this.shininess = 1.0;
+  this.relativePosition = relativePosition;
+  this.relativeAttritude = relativeAttritude;
+  this.vbo = null;
+  this.cbo = null;
+  this.nbo = null;
+  this.vertexNum = 0;
+}
+
+//xiaohei:父对象
+//relativePosition:本部件相对于父对象的相对位置的平移矩阵。
+//relativeAttribute:本部件相对于父对象的相对姿态的旋转矩阵。
+function XiaoheiHead(xiaohei, relativePosition, relativeAttritude) {
+  this.parent = xiaohei;
+  this.wireframe = false;
+  this.useTexture = false;
+  this.materialAmbient = vec4();
+  this.materialDiffuse = vec4();
+  this.materialSpecular = vec4();
+  this.shininess = 1.0;
+  this.relativePosition = relativePosition;
+  this.relativeAttritude = relativeAttritude;
+  this.transform = mat4();
+  this.vbo = null;
+  this.nbo = null;
+  this.vertices = [];
+  this.normals = [];
+  this.colors = [];
+  this.vertexNum = 0;
+  this.leftEarRelative = translate(-Xiaohei.size * 0.1, +Xiaohei.size * 0.5, 0);
+  this.rightEarRelative = translate(
+    +Xiaohei.size * 0.1,
+    +Xiaohei.size * 0.5,
+    0
+  );
+  this.headRelative = mat4();
+
+  //对一个顶点列表中的所有顶点，做matrix对应的变换，得到长度不变的顶点列表。
+  this.transformVertices = (matrix, vertices) => {
+    for (var i = 0; i < vertices.length; i++) {
+      var temp = mult(
+        matrix,
+        vec4(vertices[i][0], vertices[i][1], vertices[i][2], 1)
+      );
+      vertices[i] = vec3(temp[0], temp[1], temp[2]);
+    }
+  };
+
+  this.constructLeftEar = () => {
+    var shape_data = {
+      origin: vec3(0, 0, 0),
+      axis_length: vec2(xiaohei.size * 5, xiaohei.size * 3), //5:4:4
+      height: 0,
+      angle_range_vertical: vec3(-xiaohei.size * 6.4, +xiaohei.size * 4, 0),
+      angle_range_horizontal: vec2(0, 360),
+      position_matrix: vec4(),
+      color: vec4(0, 0, 0, 1)
+    };
+    var verticesAndNormals = taper_generator(shape_data);
+    this.transformVertices(this.leftEarRelative, verticesAndNormals.vertices);
+    this.vertices.concat(verticesAndNormals.vertices);
+    this.normals = normals.concat(verticesAndNormals.normals);
+  };
+
+  this.constructRightEar = () => {
+    var shape_data = {
+      origin: vec3(0, 0, 0),
+      axis_length: vec2(Xiaohei.size * 5, Xiaohei.size * 3),
+      height: 0,
+      angle_range_vertical: vec3(Xiaohei.size * 6.4, Xiaohei.size * 4, 0),
+      angle_range_horizontal: vec2(0, 360),
+      position_matrix: vec4(),
+      color: vec4(0, 0, 0, 1)
+    };
+    var verticesAndNormals = taper_generator(shape_data);
+    this.transformVertices(this.rightEarRelative, verticesAndNormals.vertices);
+    this.vertices.concat(verticesAndNormals.vertices);
+    this.normals = normals.concat(verticesAndNormals.normals);
+  };
+
+  this.constructHead = () => {
+    var shape_data = {
+      origin: vec3(0, 0, 0),
+      axis_length: vec3(Xiaohei.size * 5, Xiaohei.size * 4, Xiaohei.size * 4),
+      height: 0,
+      angle_range_vertical: vec2(0, 180),
+      angle_range_horizontal: vec2(0, 360),
+      position_matrix: vec4(),
+      color: vec4(0, 0, 0, 1)
+    };
+    var verticesAndNormals = taper_generator(shape_data);
+    this.transformVertices(this.headRelative, verticesAndNormals.vertices);
+    this.vertices.concat(verticesAndNormals.vertices);
+    this.normals = normals.concat(verticesAndNormals.normals);
+  };
+
+  this.init = () => {
+    //初始化vertices和normals的列表并存入buffer。
+    this.constructRightEar();
+    this.constructLeftEar();
+    this.constructHead();
+
+    this.vertexNum = this.vertices.length;
+
+    this.vbo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(this.vertices), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    this.nbo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.nbo);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(this.normals), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  };
+
+  this.updateTransform = () => {
+    this.transform = mult(
+      this.relativeAttritude,
+      mult(this.relativePosition, this.parent.transform)
+    );
+  };
+
+  this.draw = () => {
+    this.updateTransform();
+    this.parent.drawComponent(this);
+  };
+}
+
+function XiaoheiBody(xiaohei, relativePosition, relativeAttritude) {
+  this.parent = xiaohei;
+  this.materialAmbient = vec4();
+  this.materialDiffuse = vec4();
+  this.materialSpecular = vec4();
+  this.shininess = 1.0;
+  this.relativePosition = relativePosition;
+  this.relativeAttritude = relativeAttritude;
+  this.vbo = null;
+  this.cbo = null;
+  this.nbo = null;
+  this.vertexNum = 0;
+}

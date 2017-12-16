@@ -207,7 +207,7 @@ function ellipsoid_generator(shape_data) {
     }
     
     return {
-    vertexPoint: points,
+    vertices: points,
     normals: normals
     };
 }
@@ -244,7 +244,7 @@ function taper_generator(shape_data) {
   }
 
   return {
-    vertexPoint: points,
+    vertices: points,
     normals: normals
     };
 }
@@ -294,7 +294,7 @@ function cylinder_generator(shape_data) {
   }
 
   return {
-    vertexPoint: points,
+    vertices: points,
     normals: normals
     };
 }
