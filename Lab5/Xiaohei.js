@@ -315,8 +315,11 @@ var Xiaohei = {
   }
 };
 
+//实际上小黑的两只耳朵也可以看作一个类的两个实例，但是因为我们不涉及两只耳朵的独立运动，因此就把两只耳朵看作一个类的一个对象了。
 function XiaoheiInnerEar(xiaohei, relativePosition, relativeAttritude) {
   this.parent = xiaohei;
+  this.wireframe = false;
+  this.useTexture = false;
   this.materialAmbient = vec4();
   this.materialDiffuse = vec4();
   this.materialSpecular = vec4();
@@ -324,25 +327,119 @@ function XiaoheiInnerEar(xiaohei, relativePosition, relativeAttritude) {
   this.relativePosition = relativePosition;
   this.relativeAttritude = relativeAttritude;
   this.vbo = null;
-  this.cbo = null;
   this.nbo = null;
+  this.transform = mat4();
   this.vertexNum = 0;
+  this.vertices = [];
+  this.normals = [];
+  this.relativePosition = relativePosition;
+  this.relativeAttritude = relativeAttritude;
+  this.leftEarRelative = translate(-Xiaohei.size * 0.1, +Xiaohei.size * 0.5, 0);
+  this.rightEarRelative = translate(
+    +Xiaohei.size * 0.1,
+    +Xiaohei.size * 0.5,
+    0
+  );
 
-  this.draw = function() {};
+  this.constructLeftEar = () => {
+    var shape_data = {
+      origin: vec3(0, 0, 0),
+      axis_length: vec2(Xiaohei.size * 5, Xiaohei.size * 3),
+      height: 0,
+      angle_range_vertical: vec3(-6.0, +3.6, +0.35),
+      angle_range_horizontal: vec2(100, 200),
+      position_matrix: vec4(),
+      color: vec4(0, 0, 0, 1)
+    };
+
+    var verticesAndNormals = taper_generator(shape_data);
+    transformVertices(this.leftEarRelative, verticesAndNormals.vertices);
+    this.vertices.concat(verticesAndNormals.vertices);
+    this.normals.concat(verticesAndNormals.normals);
+  };
+
+  this.constructRightEar = () => {
+    var shape_data = {
+      origin: vec3(0, 0, 0),
+      axis_length: vec2(Xiaohei.size * 5, Xiaohei.size * 3),
+      height: 0,
+      angle_range_vertical: vec3(+6.0, +3.6, +0.35),
+      angle_range_horizontal: vec2(100, 200),
+      position_matrix: vec4(),
+      color: vec4(0, 0, 0, 1)
+    };
+
+    var verticesAndNormals = taper_generator(shape_data);
+    transformVertices(this.rightEarRelative, verticesAndNormals.vertices);
+    this.vertices.concat(verticesAndNormals.vertices);
+    this.normals.concat(verticesAndNormals.normals);
+
+    this.vbo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(this.vertices), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    this.nbo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.nbo);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(this.normals), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  };
+
+  this.init = () => {
+    this.constructLeftEar();
+    this.constructRightEar();
+    this.vertexNum = this.vertices.length;
+    this.updateTransform();
+  };
+
+  this.updateTransform = () => {
+    //更新头部整体相对于原点的状态矩阵。
+    this.transform = mult(
+      this.relativeAttritude,
+      mult(this.relativePosition, this.parent.transform)
+    );
+  };
+
+  this.draw = () => {
+    this.updateTransform();
+    this.parent.drawComponent(this);
+  };
 }
 
 function XiaoheiBackLeg(xiaohei, relativePosition, relativeAttritude) {
   this.parent = xiaohei;
+
   this.materialAmbient = vec4();
   this.materialDiffuse = vec4();
   this.materialSpecular = vec4();
   this.shininess = 1.0;
+
   this.relativePosition = relativePosition;
   this.relativeAttritude = relativeAttritude;
+  this.transform = mat4();
+
   this.vbo = null;
-  this.cbo = null;
   this.nbo = null;
+  this.vertices = [];
+  this.normals = [];
   this.vertexNum = 0;
+
+  this.legRelative = mult(relativeAttritude, relativePosition);
+
+  this.constructLeg = () => {
+    var shape_data = {
+      origin: vec3(0, 0, 0),
+      axis_length: vec2(Xiaohei.size * 0.8, Xiaohei.size * 0.8),
+      height: Xiaohei.size * 3,
+      angle_range_vertical: vec3(-xiaohei.size * 6.4, +xiaohei.size * 4, 0),
+      angle_range_horizontal: vec2(0, 360),
+      color: vec4(0, 0, 0, 1)
+    };
+    var verticesAndNormals = taper_generator(shape_data);
+    this.transformVertices(this.legRelative, verticesAndNormals.vertices);
+    this.vertices.concat(verticesAndNormals.vertices);
+    this.normals = normals.concat(verticesAndNormals.normals);
+  };
 
   this.draw = function() {};
 }
@@ -364,6 +461,7 @@ function XiaoheiFrontLeg(xiaohei, relativePosition, relativeAttritude) {
 //xiaohei:父对象
 //relativePosition:本部件相对于父对象的相对位置的平移矩阵。
 //relativeAttribute:本部件相对于父对象的相对姿态的旋转矩阵。
+//虽然头只有一个，不需要重用，但是腿和手的类是需要重用的，需要标识有区别的位置，为了构造函数的一致，统一加上后两个参数。
 function XiaoheiHead(xiaohei, relativePosition, relativeAttritude) {
   this.parent = xiaohei;
   this.wireframe = false;
@@ -372,14 +470,16 @@ function XiaoheiHead(xiaohei, relativePosition, relativeAttritude) {
   this.materialDiffuse = vec4();
   this.materialSpecular = vec4();
   this.shininess = 1.0;
+
   this.relativePosition = relativePosition;
   this.relativeAttritude = relativeAttritude;
+  //但是这两个参数仅在第一次计算顶点位置的时候使用。
+
   this.transform = mat4();
   this.vbo = null;
   this.nbo = null;
   this.vertices = [];
   this.normals = [];
-  this.colors = [];
   this.vertexNum = 0;
   this.leftEarRelative = translate(-Xiaohei.size * 0.1, +Xiaohei.size * 0.5, 0);
   this.rightEarRelative = translate(
@@ -465,9 +565,12 @@ function XiaoheiHead(xiaohei, relativePosition, relativeAttritude) {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.nbo);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(this.normals), gl.STATIC_DRAW);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    this.updateTransform();
   };
 
   this.updateTransform = () => {
+    //更新头部整体相对于原点的状态矩阵。
     this.transform = mult(
       this.relativeAttritude,
       mult(this.relativePosition, this.parent.transform)
@@ -489,7 +592,6 @@ function XiaoheiBody(xiaohei, relativePosition, relativeAttritude) {
   this.relativePosition = relativePosition;
   this.relativeAttritude = relativeAttritude;
   this.vbo = null;
-  this.cbo = null;
   this.nbo = null;
   this.vertexNum = 0;
 }
