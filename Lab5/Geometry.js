@@ -37,7 +37,7 @@
     @param program:
         the program is a pointer to shaders.
  */
-function draw_ellipsoid(vertices,colors, rotate_mat) {
+function draw_ellipsoid(vertices, colors, rotate_mat) {
   // for (var i = 0; i < 12; i++) {
   //点和颜色放入obj.build里边，然后生成的话放入app.js里边
   renderPoints(vertices, colors, rotate_mat);
@@ -64,7 +64,7 @@ function draw_ellipsoid(vertices,colors, rotate_mat) {
     @param program:
         the program is a pointer to shaders.
  */
-function draw_cylinder(vertices,colors, rotate_mat) {
+function draw_cylinder(vertices, colors, rotate_mat) {
   // for (var i = 0; i < 12; i++) {
   renderPoints(vertices, colors, rotate_mat);
   // }
@@ -89,19 +89,49 @@ function draw_cylinder(vertices,colors, rotate_mat) {
     @param program:
         the program is a pointer to shaders.
  */
-function draw_taper(vertices,colors, rotate_mat) {
+function draw_taper(vertices, colors, rotate_mat) {
   // for (var i = 0; i < 12; i++) {
   renderPoints(vertices, colors, rotate_mat);
   // }
 }
 
-function get_ellipsoid_normals(a, b, c, abias, bbias, cbias, p){
+function get_ellipsoid_normals(a, b, c, abias, bbias, cbias, p) {
   return vec3(
-       Math.sqrt(a * a + b * b + c * c)/ 2 / Math.sqrt(Math.pow(p[0] - abias, 2) + Math.pow(p[1] - cbias, 2) + Math.pow(p[2] - bbias, 2)) * 2 * (p[0] - abias) / a / a,
-       Math.sqrt(a * a + b * b + c * c)/ 2 / Math.sqrt(Math.pow(p[0] - abias, 2) + Math.pow(p[1] - cbias, 2) + Math.pow(p[2] - bbias, 2)) * 2 * (p[1] - cbias) / c / c,
-       Math.sqrt(a * a + b * b + c * c)/ 2 / Math.sqrt(Math.pow(p[0] - abias, 2) + Math.pow(p[1] - cbias, 2) + Math.pow(p[2] - bbias, 2)) * 2 * (p[2] - bbias) / b / b);
+    Math.sqrt(a * a + b * b + c * c) /
+      2 /
+      Math.sqrt(
+        Math.pow(p[0] - abias, 2) +
+          Math.pow(p[1] - cbias, 2) +
+          Math.pow(p[2] - bbias, 2)
+      ) *
+      2 *
+      (p[0] - abias) /
+      a /
+      a,
+    Math.sqrt(a * a + b * b + c * c) /
+      2 /
+      Math.sqrt(
+        Math.pow(p[0] - abias, 2) +
+          Math.pow(p[1] - cbias, 2) +
+          Math.pow(p[2] - bbias, 2)
+      ) *
+      2 *
+      (p[1] - cbias) /
+      c /
+      c,
+    Math.sqrt(a * a + b * b + c * c) /
+      2 /
+      Math.sqrt(
+        Math.pow(p[0] - abias, 2) +
+          Math.pow(p[1] - cbias, 2) +
+          Math.pow(p[2] - bbias, 2)
+      ) *
+      2 *
+      (p[2] - bbias) /
+      b /
+      b
+  );
 }
-
 
 function renderPoints(vertices, colors, mat) {
   var colorBuffer = gl.createBuffer();
@@ -124,105 +154,164 @@ function renderPoints(vertices, colors, mat) {
   gl.drawArrays(gl.TRIANGLES, 0, vertices.length);
 }
 
-function ellipsoid_generator(shape_data) {
-    var a = shape_data["axis_length"][0];
-    var b = shape_data["axis_length"][1];
-    var c = shape_data["axis_length"][2];
-    var abias = shape_data["origin"][0];
-    var bbias = shape_data["origin"][1];
-    var cbias = shape_data["origin"][2];
-    var points = [];
-    var normals = [];
-    var theta_step = 3;
-    var fai_step = 3;
-    
-    for (
-         var theta = shape_data["angle_range_vertical"][0]; theta < shape_data["angle_range_vertical"][1]; theta += theta_step
-         ) {
-        for (
-             var fai = shape_data["angle_range_horizontal"][0]; fai < shape_data["angle_range_horizontal"][1]; fai += fai_step
-             ) {
-            var p1 = vec3(
-                          a * Math.sin(theta / 180 * Math.PI) * Math.cos(fai / 180 * Math.PI) +
-                          abias,
-                          c * Math.cos(theta / 180 * Math.PI) + bbias,
-                          b * Math.sin(theta / 180 * Math.PI) * Math.sin(fai / 180 * Math.PI) +
-                          cbias
-                          );
-            var n1 = get_ellipsoid_normals(a, b, c, abias, bbias, cbias, p1);
-            
-            var p2 = vec3(
-                          a *
-                          Math.sin((theta + theta_step) / 180 * Math.PI) *
-                          Math.cos(fai / 180 * Math.PI) +
-                          abias,
-                          c * Math.cos((theta + theta_step) / 180 * Math.PI) + bbias,
-                          b *
-                          Math.sin((theta + theta_step) / 180 * Math.PI) *
-                          Math.sin(fai / 180 * Math.PI) +
-                          cbias
-                          );
-            var n2 = get_ellipsoid_normals(a, b, c, abias, bbias, cbias, p2);
-            
-            var p3 = vec3(
-                          a *
-                          Math.sin((theta + theta_step) / 180 * Math.PI) *
-                          Math.cos((fai + fai_step) / 180 * Math.PI) +
-                          abias,
-                          c * Math.cos((theta + theta_step) / 180 * Math.PI) + bbias,
-                          b *
-                          Math.sin((theta + theta_step) / 180 * Math.PI) *
-                          Math.sin((fai + fai_step) / 180 * Math.PI) +
-                          cbias
-                          );
-            var n3 = get_ellipsoid_normals(a, b, c, abias, bbias, cbias, p3);
-            
-            var p4 = vec3(
-                          a *
-                          Math.sin(theta / 180 * Math.PI) *
-                          Math.cos((fai + fai_step) / 180 * Math.PI) +
-                          abias,
-                          c * Math.cos(theta / 180 * Math.PI) + bbias,
-                          b *
-                          Math.sin(theta / 180 * Math.PI) *
-                          Math.sin((fai + fai_step) / 180 * Math.PI) +
-                          cbias
-                          );
-            var n4 = get_ellipsoid_normals(a, b, c, abias, bbias, cbias, p1);
-            
-            points.push(p1);
-            normals.push(n1);
-            points.push(p2);
-            normals.push(n2);
-            points.push(p3);
-            normals.push(n3);
-            points.push(p1);
-            normals.push(n1);
-            points.push(p3);
-            normals.push(n3);
-            points.push(p4);
-            normals.push(n4);
-            
-        }
-    }
-    
-    return {
-    vertexPoint: points,
-    normals: normals
-    };
-}
-
-function taper_generator(shape_data) {
+function ellipsoid_generator(shape_data, texture_generator) {
+  var a = shape_data["axis_length"][0];
+  var b = shape_data["axis_length"][1];
+  var c = shape_data["axis_length"][2];
+  var abias = shape_data["origin"][0];
+  var bbias = shape_data["origin"][1];
+  var cbias = shape_data["origin"][2];
   var points = [];
   var normals = [];
+  var textures = [];
+  var theta_step = 3;
+  var fai_step = 3;
+
+  for (
+    var theta = shape_data["angle_range_vertical"][0];
+    theta < shape_data["angle_range_vertical"][1];
+    theta += theta_step
+  ) {
+    for (
+      var fai = shape_data["angle_range_horizontal"][0];
+      fai < shape_data["angle_range_horizontal"][1];
+      fai += fai_step
+    ) {
+      var p1 = vec3(
+        a * Math.sin(theta / 180 * Math.PI) * Math.cos(fai / 180 * Math.PI) +
+          abias,
+        c * Math.cos(theta / 180 * Math.PI) + bbias,
+        b * Math.sin(theta / 180 * Math.PI) * Math.sin(fai / 180 * Math.PI) +
+          cbias
+      );
+      var n1 = get_ellipsoid_normals(a, b, c, abias, bbias, cbias, p1);
+      if (texture_generator != undefined) {
+        var t1 = texture_generator(
+          p1[0] - abias,
+          p1[1] - bbias,
+          p1[2] - cbias,
+          2.0 * a,
+          2.0 * c
+        );
+      }
+
+      var p2 = vec3(
+        a *
+          Math.sin((theta + theta_step) / 180 * Math.PI) *
+          Math.cos(fai / 180 * Math.PI) +
+          abias,
+        c * Math.cos((theta + theta_step) / 180 * Math.PI) + bbias,
+        b *
+          Math.sin((theta + theta_step) / 180 * Math.PI) *
+          Math.sin(fai / 180 * Math.PI) +
+          cbias
+      );
+      var n2 = get_ellipsoid_normals(a, b, c, abias, bbias, cbias, p2);
+      if (texture_generator != undefined) {
+        var t2 = texture_generator(
+          p2[0] - abias,
+          p2[1] - bbias,
+          p2[2] - cbias,
+          2.0 * a,
+          2.0 * c
+        );
+      }
+
+      var p3 = vec3(
+        a *
+          Math.sin((theta + theta_step) / 180 * Math.PI) *
+          Math.cos((fai + fai_step) / 180 * Math.PI) +
+          abias,
+        c * Math.cos((theta + theta_step) / 180 * Math.PI) + bbias,
+        b *
+          Math.sin((theta + theta_step) / 180 * Math.PI) *
+          Math.sin((fai + fai_step) / 180 * Math.PI) +
+          cbias
+      );
+      var n3 = get_ellipsoid_normals(a, b, c, abias, bbias, cbias, p3);
+      if (texture_generator != undefined) {
+        var t3 = texture_generator(
+          p3[0] - abias,
+          p3[1] - bbias,
+          p3[2] - cbias,
+          2.0 * a,
+          2.0 * c
+        );
+      }
+
+      var p4 = vec3(
+        a *
+          Math.sin(theta / 180 * Math.PI) *
+          Math.cos((fai + fai_step) / 180 * Math.PI) +
+          abias,
+        c * Math.cos(theta / 180 * Math.PI) + bbias,
+        b *
+          Math.sin(theta / 180 * Math.PI) *
+          Math.sin((fai + fai_step) / 180 * Math.PI) +
+          cbias
+      );
+      var n4 = get_ellipsoid_normals(a, b, c, abias, bbias, cbias, p1);
+      if (texture_generator != undefined) {
+        var t4 = texture_generator(
+          p4[0] - abias,
+          p4[1] - bbias,
+          p4[2] - cbias,
+          2.0 * a,
+          2.0 * c
+        );
+      }
+
+      points.push(p1);
+      normals.push(n1);
+      points.push(p2);
+      normals.push(n2);
+      points.push(p3);
+      normals.push(n3);
+      points.push(p1);
+      normals.push(n1);
+      points.push(p3);
+      normals.push(n3);
+      points.push(p4);
+      normals.push(n4);
+
+      if (texture_generator != undefined) {
+        textures.push(t1);
+        textures.push(t2);
+        textures.push(t3);
+        textures.push(t1);
+        textures.push(t3);
+        textures.push(t4);
+      }
+    }
+  }
+
+  return {
+    vertexPoint: points,
+    normals: normals,
+    textures: textures
+  };
+}
+
+function taper_generator(shape_data, texture_generator) {
+  var points = [];
+  var normals = [];
+  var textures = [];
   var abias = shape_data["origin"][0];
   var bbias = shape_data["origin"][1];
   var cbias = shape_data["origin"][2];
   var a = shape_data["axis_length"][0];
   var b = shape_data["axis_length"][1];
 
-  for (var theta = shape_data["angle_range_horizontal"][0]; theta < shape_data["angle_range_horizontal"][1]; theta++) {
-    var p1 = vec3(shape_data["angle_range_vertical"][0], shape_data["angle_range_vertical"][1], shape_data["angle_range_vertical"][2]);
+  for (
+    var theta = shape_data["angle_range_horizontal"][0];
+    theta < shape_data["angle_range_horizontal"][1];
+    theta++
+  ) {
+    var p1 = vec3(
+      shape_data["angle_range_vertical"][0],
+      shape_data["angle_range_vertical"][1],
+      shape_data["angle_range_vertical"][2]
+    );
     var p2 = vec3(
       a * Math.cos(theta / 180 * Math.PI) + abias,
       bbias,
@@ -233,8 +322,13 @@ function taper_generator(shape_data) {
       bbias,
       b * Math.sin((theta + 1) / 180 * Math.PI) + cbias
     );
-
-    var normal = vec3(cross(subtract(p2,p1), subtract(p3,p1)));
+    if (texture_generator != undefined) {
+      var t1 = texture_generator(theta, 0, 512);
+      textures.push(t1);
+      textures.push(t1);
+      textures.push(t1);
+    }
+    var normal = vec3(cross(subtract(p2, p1), subtract(p3, p1)));
     points.push(p1);
     points.push(p2);
     points.push(p3);
@@ -245,22 +339,29 @@ function taper_generator(shape_data) {
 
   return {
     vertexPoint: points,
-    normals: normals
-    };
+    normals: normals,
+    textures: textures
+  };
 }
 
-function cylinder_generator(shape_data) {
+function cylinder_generator(shape_data, texture_generator) {
   var points = [];
   var normals = [];
+  var textures = [];
   var abias = shape_data["origin"][0];
   var bbias = shape_data["origin"][1];
   var cbias = shape_data["origin"][2];
   var a = shape_data["axis_length"][0];
   var b = shape_data["axis_length"][1];
 
-  for (var theta = shape_data["angle_range_horizontal"][0]; theta <= shape_data["angle_range_horizontal"][1]; theta += 1) {
+  for (
+    var theta = shape_data["angle_range_horizontal"][0];
+    theta <= shape_data["angle_range_horizontal"][1];
+    theta += 1
+  ) {
     var p1 = vec3(
-      a * Math.cos(theta / 180 * Math.PI) + abias, -shape_data["height"] / 2 + bbias,
+      a * Math.cos(theta / 180 * Math.PI) + abias,
+      -shape_data["height"] / 2 + bbias,
       b * Math.sin(theta / 180 * Math.PI) + cbias
     );
     var p2 = vec3(
@@ -274,11 +375,20 @@ function cylinder_generator(shape_data) {
       b * Math.sin((theta + 1) / 180 * Math.PI) + cbias
     );
     var p4 = vec3(
-      a * Math.cos((theta + 1) / 180 * Math.PI) + abias, -shape_data["height"] / 2 + bbias,
+      a * Math.cos((theta + 1) / 180 * Math.PI) + abias,
+      -shape_data["height"] / 2 + bbias,
       b * Math.sin((theta + 1) / 180 * Math.PI) + cbias
     );
-    var normal = vec3(cross(subtract(p2,p1), subtract(p3,p1)));
-
+    var normal = vec3(cross(subtract(p2, p1), subtract(p3, p1)));
+    if (texture_generator != undefined) {
+      var t1 = texture_generator(theta, 0, 512);
+      textures.push(t1);
+      textures.push(t1);
+      textures.push(t1);
+      textures.push(t1);
+      textures.push(t1);
+      textures.push(t1);
+    }
     points.push(p1);
     points.push(p2);
     points.push(p3);
@@ -295,8 +405,9 @@ function cylinder_generator(shape_data) {
 
   return {
     vertexPoint: points,
-    normals: normals
-    };
+    normals: normals,
+    textures: textures
+  };
 }
 
 function generateColors(count, color) {

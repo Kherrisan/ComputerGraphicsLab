@@ -37,7 +37,6 @@ function App(ch, lh, dh) {
     uPMatrix = gl.getUniformLocation(program, "uPMatrix");
     uPerVertexColor = gl.getUniformLocation(program, "uPerVertexColor");
     uColor = gl.getUniformLocation(program, "uColor");
-    uUseTexture = gl.getUniformLocation(program, "uUseTexture");
     uSampler = gl.getUniformLocation(program, "uSampler");
     uLightPosition = gl.getUniformLocation(program, "uLightPosition");
     uNMatrix = gl.getUniformLocation(program, "uNMatrix");
@@ -47,20 +46,23 @@ function App(ch, lh, dh) {
     uDiffuseProduct = gl.getUniformLocation(program, "uDiffuseProduct");
     uSpecularProduct = gl.getUniformLocation(program, "uSpecularProduct");
     uShininess = gl.getUniformLocation(program, "uShininess");
+    uTexture_0_xiaohei = gl.getUniformLocation(program, "uTexture_0_xiaohei");
+    uUseTexture = gl.getUniformLocation(program, "uUseTexture");
+    aTextureCoord = gl.getAttribLocation(program, "aTextureCoord");
 
-    Floor.build(40, 20);
-    Scene.addObject(Floor);
+    // Floor.build(40, 20);
+    // Scene.addObject(Floor);
 
-    heixiu = new Heixiu();
-    heixiu2 = new Heixiu();
-    heixiu.setLocation(3, 1, -3);
-    heixiu2.setLocation(-3, 1, -3);
-    heixiu.onChange = this.draw;
-    heixiu2.onChange = this.draw;
-    heixiu.build();
-    heixiu2.build();
-    Scene.addObject(heixiu);
-    Scene.addObject(heixiu2);
+    // heixiu = new Heixiu();
+    // heixiu2 = new Heixiu();
+    // heixiu.setLocation(3, 1, -3);
+    // heixiu2.setLocation(-3, 1, -3);
+    // heixiu.onChange = this.draw;
+    // heixiu2.onChange = this.draw;
+    // heixiu.build();
+    // heixiu2.build();
+    // Scene.addObject(heixiu);
+    // Scene.addObject(heixiu2);
 
     Xiaohei.build();
     Scene.addObject(Xiaohei);
@@ -260,12 +262,21 @@ function App(ch, lh, dh) {
         gl.uniformMatrix4fv(uTMatrix, false, flatten(mat4()));
       }
 
-      if (object.perVertexColor) {
-        gl.bindBuffer(gl.ARRAY_BUFFER, object.cbo);
-        gl.vertexAttribPointer(aVertexColor, 4, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(aVertexColor);
-      } else {
-        gl.uniform4fv(uColor, object.color);
+      // if (object.perVertexColor) {
+      //   gl.bindBuffer(gl.ARRAY_BUFFER, object.cbo);
+      //   gl.vertexAttribPointer(aVertexColor, 4, gl.FLOAT, false, 0, 0);
+      //   gl.enableVertexAttribArray(aVertexColor);
+      // } else {
+      //   gl.uniform4fv(uColor, object.color);
+      // }
+      if (object.useTexture) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, object.tbo);
+        gl.vertexAttribPointer(aTextureCoord, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(aTextureCoord);
+        
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, object.texture);
+        gl.uniform1i(uTexture_0_xiaohei, 0);
       }
 
       //如果不是线框图，就传顶点法向量buffer。

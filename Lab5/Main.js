@@ -18,8 +18,8 @@ var aVertexPosition = null;
 var uPerVertexColor = null;
 var uColor = null;
 var uUseTexture = null;
-var uSampler = null;
-var aVertexTextureCoords = null;
+var uTexture_0_xiaohei = null;
+var aTextureCoord = null;
 
 //光照有关参数
 var aVertexNormal = null;

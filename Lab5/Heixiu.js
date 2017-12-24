@@ -80,8 +80,6 @@ Heixiu.prototype.build = function() {
   gl.bindBuffer(gl.ARRAY_BUFFER, this.nbo);
   gl.bufferData(gl.ARRAY_BUFFER, flatten(normals), gl.STATIC_DRAW);
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
-
-  this.updateTransformMatrix();
 };
 
 Heixiu.prototype.updateTransformMatrix = function() {

@@ -12,6 +12,7 @@
         uniform mat3 uNMatrix;      // normal matrix
         attribute vec4 aVertexNormal;       // normal vertex
         varying vec3 N,L,E;
+        varying vec2 vTextureCoord;
 
         uniform mat4 uPMatrix;
         uniform mat4 uMVMatrix;
@@ -19,8 +20,11 @@
         uniform bool uPerVertexColor;
         uniform bool uWireframe;
         uniform vec4 uColor;
+        uniform bool uUseTexture;
         attribute vec3 aVertexPosition;
         attribute vec4 aVertexColor;
+        attribute vec2 aTextureCoord;
+
         void main()
         {
             vec4 fColor;
@@ -41,7 +45,9 @@
 
             E = -normalize(pos);
             N = aVertexNormal.xyz;
-            
+            if(uUseTexture) {
+                vTextureCoord = aTextureCoord;
+            }
         }
     </script>
 
@@ -51,8 +57,12 @@
         uniform vec4 uAmbientProduct;
         uniform vec4 uDiffuseProduct;
         uniform vec4 uSpecularProduct;
+        uniform bool uUseTexture;
+        uniform sampler2D uTexture_0_xiaohei;
         uniform float uShininess;
         varying vec3 N,L,E;
+        varying vec2 vTextureCoord;
+
         void main() { 
             vec4 fColor;
 
@@ -69,25 +79,28 @@
             fColor = ambient+diffuse+specular;
             fColor.a = 1.0;
             
-
-            gl_FragColor = fColor;
+            if(uUseTexture){
+                gl_FragColor = fColor * texture2D(uTexture_0_xiaohei, vTextureCoord);
+            }else{
+                gl_FragColor = fColor;
+            }
             
-             }
+        }
     </script>
 
-    <script type="text/javascript" src="./common/webgl-utils.js"></script>
-    <script type="text/javascript" src="./common/initShaders.js"></script>
-    <script type="text/javascript" src="./common/MV.js"></script>
-    <script type="text/javascript" src="./Light.js"></script>
-    <script type="text/javascript" src="./Camera.js"></script>
-    <script type="text/javascript" src="./CameraInteractor.js"></script>
-    <script type="text/javascript" src="./Floor.js"></script>
-    <script type="text/javascript" src="./Geometry.js"></script>
-    <script type="text/javascript" src="./Scene.js"></script>
-    <script type="text/javascript" src="./Xiaohei.js"></script>
-    <script type="text/javascript" src="./Heixiu.js"></script>
-    <script type="text/javascript" src="./App.js"></script>
-    <script type="text/javascript" src="./Main.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/common/webgl-utils.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/common/initShaders.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/common/MV.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/Light.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/Camera.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/CameraInteractor.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/Floor.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/Geometry.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/Scene.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/Xiaohei.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/Heixiu.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/App.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/Main.js"></script>
 
 </head>
 
@@ -129,6 +142,7 @@
             <button type="button" id="out" class="btn btn-primary">Dolly Out</button>
         </div>
         </container>
+        <img id="texImage" src="http://localhost:9090/face_big.jpg" hidden/>
 </body>
 
 </html>
