@@ -53,16 +53,16 @@ function App(ch, lh, dh) {
     // Floor.build(40, 20);
     // Scene.addObject(Floor);
 
-    // heixiu = new Heixiu();
-    // heixiu2 = new Heixiu();
-    // heixiu.setLocation(3, 1, -3);
-    // heixiu2.setLocation(-3, 1, -3);
-    // heixiu.onChange = this.draw;
-    // heixiu2.onChange = this.draw;
-    // heixiu.build();
-    // heixiu2.build();
-    // Scene.addObject(heixiu);
-    // Scene.addObject(heixiu2);
+    heixiu = new Heixiu();
+    heixiu2 = new Heixiu();
+    heixiu.setLocation(3, 1, -3);
+    heixiu2.setLocation(-3, 1, -3);
+    heixiu.onChange = this.draw;
+    heixiu2.onChange = this.draw;
+    heixiu.build();
+    heixiu2.build();
+    Scene.addObject(heixiu);
+    Scene.addObject(heixiu2);
 
     Xiaohei.build();
     Scene.addObject(Xiaohei);
@@ -273,7 +273,7 @@ function App(ch, lh, dh) {
         gl.bindBuffer(gl.ARRAY_BUFFER, object.tbo);
         gl.vertexAttribPointer(aTextureCoord, 2, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(aTextureCoord);
-        
+
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, object.texture);
         gl.uniform1i(uTexture_0_xiaohei, 0);
