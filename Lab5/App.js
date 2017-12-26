@@ -50,8 +50,8 @@ function App(ch, lh, dh) {
     uUseTexture = gl.getUniformLocation(program, "uUseTexture");
     aTextureCoord = gl.getAttribLocation(program, "aTextureCoord");
 
-    // Floor.build(40, 20);
-    // Scene.addObject(Floor);
+    Floor.build(40, 20);
+    Scene.addObject(Floor);
 
     heixiu = new Heixiu();
     heixiu2 = new Heixiu();
