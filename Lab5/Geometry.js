@@ -419,3 +419,66 @@ function generateColors(count, color) {
 
   return colors;
 }
+
+/*
+    This is the function to create a cuboid points.
+    @param shape_data:
+        this parameter contains the necessary information for creating an ellipsoid. It should be defined
+        in Javascript Object Form. The object should contains these properties:
+        shape_data{bottom_leftup, bottom_leftdown, bottom_rightup, bottom_rightdown, height}
+            1. property "bottom_leftup" means the left-up point of the bottom of the cuboid. It should be an array with 3 elements.
+            2. property "bottom_leftdown" means the left-down point of the bottom of the cuboid. It should be an array with 3 elements.
+            3. property "bottom_rightup" means the right-up point of the bottom of the cuboid. It should be an array with 3 elements.
+            4. property "bottom_rightdown" means the left-up point of the bottom of the cuboid. It should be an array with 3 elements.
+            5. property "height" means the height of the cuboid. It should be an number.
+ */
+// function cuboid_generator(shape_data){
+//   var pointArray;
+//   var points;
+//   var normals;
+//   var indice = [1, 3, 8, 1, 8, 5, 1, 6, 7, 1, 7, 3, 6, 2, 4, 6, 4, 7, 2, 5, 8, 2, 8, 4, 3, 7, 4, 3, 4, 8, 1, 5, 2, 1, 2, 6];
+  
+//   for(var k = 0; k < 36; k++)
+//       indice[k]--;
+  
+//   var p1 = vec3(shape_data["bottom_leftup"][0], shape_data["bottom_leftup"][1], shape_data["bottom_leftup"][2]);
+//   pointArray.push(p1);
+//   var p2 = vec3(shape_data["bottom_rightdown"][0], shape_data["bottom_rightdown"][1], shape_data["bottom_rightdown"][3]);
+//   pointArray.push(p2);
+//   var p3 = vec3(shape_data["bottom_leftup"][0], shape_data["bottom_leftup"][1] + shape_data["height"], shape_data["bottom_leftup"]);
+//   pointArray.push(p3);
+//   var p4 = vec3(shape_data["bottom_rightdown"][0], shape_data["bottom_rightdown"][1] + shape_data["height"], shape_data["bottom_rightdown"]);
+//   pointArray.push(p4);
+//   var p5 = vec3(shape_data["bottom_leftdown"][0], shape_data["bottom_leftdown"][1], shape_data["bottom_leftdown"][2]);
+//   pointArray.push(p5);
+//   var p6 = vec3(shape_data["bottom_rightup"][0], shape_data["bottom_rightup"][1], shape_data["bottom_rightup"][2]);
+//   pointArray.push(p6);
+//   var p7 = vec3(shape_data["bottom_rightup"][0], shape_data["bottom_rightup"][1] + shape_data["height"], shape_data["bottom_rightup"][2]);
+//   pointArray.push(p7);
+//   var p8 = vec3(shape_data["bottom_leftdown"][0], shape_data["bottom_leftdown"][1] + shape_data["height"], shape_data["bottom_leftdown"][2]);
+//   pointArray.push(p8);
+  
+//   var normal_tmp;
+//   for(var i = 0; i < 36; i += 6){
+//       normal_tmp = get_rectangle_normals([pointArray[indice[i]], pointArray[indice[i + 1]], pointArray[indice[i + 2]], pointArray[indice[i + 5]]]);
+//       for(int j = 0; j < 6; j++){
+//           normals.push(normal_tmp[j]);
+//           points.push(pointArray[indice[i + j]]);
+//       }
+//   }
+
+//   return {
+//       vertices: points,
+//       normals: normals
+//   };
+// }
+
+// function get_rectangle_normals(vertices){
+//   var t1 = subtract(vertices[2] - vertices[0]);
+//   var t2 = subtract(vertices[1] - vertices[3]);
+  
+//   var normal = vec3(cross(t1, t2));
+  
+//   return [normal, normal, normal, normal, normal, normal];
+// }
+
