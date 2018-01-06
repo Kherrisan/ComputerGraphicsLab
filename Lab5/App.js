@@ -66,6 +66,9 @@ function App(ch, lh, dh) {
 
     Xiaohei.build();
     Scene.addObject(Xiaohei);
+    
+    Wall.build();
+    Scene.addObject(Wall);
 
     document.getElementById("RotateLeft").onclick = () => {
       Xiaohei.rotateLeft();
@@ -267,7 +270,7 @@ function App(ch, lh, dh) {
       //   gl.vertexAttribPointer(aVertexColor, 4, gl.FLOAT, false, 0, 0);
       //   gl.enableVertexAttribArray(aVertexColor);
       // } else {
-      //   gl.uniform4fv(uColor, object.color);
+      //   // gl.uniform4fv(uColor, object.color);
       // }
       if (object.useTexture) {
         gl.bindBuffer(gl.ARRAY_BUFFER, object.tbo);

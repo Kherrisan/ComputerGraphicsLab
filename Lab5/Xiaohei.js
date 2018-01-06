@@ -39,16 +39,16 @@ var Xiaohei = {
   vertexNum: 0,
   // wireframe: false,
   // perVertexColor: true,
-  useTexture: true,
+  useTexture: false,
   transformMatrix: null,
   perVertexColor: true,
   build: () => {
     var image = document.getElementById("texImage");
 
-    Xiaohei.texture = gl.createTexture();
+    // Xiaohei.texture = gl.createTexture();
     // gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, Xiaohei.texture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+    // gl.bindTexture(gl.TEXTURE_2D, Xiaohei.texture);
+    // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
     // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -60,7 +60,7 @@ var Xiaohei = {
     // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.generateMipmap(gl.TEXTURE_2D);
+    // gl.generateMipmap(gl.TEXTURE_2D);
 
     var vertices = [];
     var normals = [];
