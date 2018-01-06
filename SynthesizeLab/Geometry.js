@@ -433,9 +433,9 @@ function generateColors(count, color) {
             5. property "height" means the height of the cuboid. It should be an number.
  */
 function cuboid_generator(shape_data) {
-  var pointArray;
-  var points;
-  var normals;
+  var pointArray=[];
+  var points=[];
+  var normals=[];
   var indice = [
     1,
     3,
