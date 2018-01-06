@@ -46,6 +46,8 @@ function App(ch, lh, dh) {
     uTexture_0_xiaohei = gl.getUniformLocation(program, "uTexture_0_xiaohei");
     uUseTexture = gl.getUniformLocation(program, "uUseTexture");
     aTextureCoord = gl.getAttribLocation(program, "aTextureCoord");
+    Wall.build();
+    Scene.addObject(Wall);
 
     Floor.build(40, 20);
     Scene.addObject(Floor);
@@ -65,8 +67,7 @@ function App(ch, lh, dh) {
     Scene.addObject(Xiaohei);
     Light.build();
     Scene.addObject(Light);
-    Wall.build();
-    Scene.addObject(Wall);
+
 
     document.getElementById("RotateLeft").onclick = () => {
       Xiaohei.rotateLeft();
@@ -312,6 +313,7 @@ function App(ch, lh, dh) {
         gl.drawArrays(gl.TRIANGLES, 0, object.vertexNum);
       }
 
+      gl.disableVertexAttribArray(aVertexNormal);
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
     }

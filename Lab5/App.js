@@ -64,12 +64,10 @@ function App(ch, lh, dh) {
     Scene.addObject(heixiu);
     Scene.addObject(heixiu2);
 
-
     Xiaohei.build();
     Scene.addObject(Xiaohei);
     Light.build();
     Scene.addObject(Light);
-
 
     document.getElementById("RotateLeft").onclick = () => {
       Xiaohei.rotateLeft();
@@ -323,6 +321,7 @@ function App(ch, lh, dh) {
         gl.drawArrays(gl.TRIANGLES, 0, object.vertexNum);
       }
 
+      gl.disableVertexAttribArray(aVertexPosition);
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
     }
