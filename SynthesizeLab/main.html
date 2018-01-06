@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        uniform vec4 uLightPosition;
+        uniform mat3 uNMatrix;      // normal matrix
+        attribute vec4 aVertexNormal;       // normal vertex
+        varying vec3 N,L,E;
+        varying vec2 vTextureCoord;
+
+        uniform mat4 uPMatrix;
+        uniform mat4 uMVMatrix;
+        uniform mat4 uTMatrix;
+        uniform bool uPerVertexColor;
+        uniform bool uWireframe;
+        uniform vec4 uColor;
+        uniform bool uUseTexture;
+        attribute vec3 aVertexPosition;
+        attribute vec4 aVertexColor;
+        attribute vec2 aTextureCoord;
+
+        void main()
+        {
+            vec4 fColor;
+            gl_Position = uPMatrix * uMVMatrix * uTMatrix * vec4(aVertexPosition, 1.0);
+            if (uPerVertexColor)
+            {
+                fColor = aVertexColor;
+            }
+            else
+            {
+                fColor = uColor;
+            }
+
+            vec3 pos =  (uMVMatrix * uTMatrix * vec4(aVertexPosition, 1.0)).xyz;
+            // check for directional light
+            if(uLightPosition.w ==0.0) L=normalize(uLightPosition.xyz);
+            else L = normalize( uLightPosition.xyz - pos );
+
+            E = -normalize(pos);
+            N = aVertexNormal.xyz;
+            if(uUseTexture) {
+                vTextureCoord = aTextureCoord;
+            }
+        }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+
+        precision mediump float;
+        uniform vec4 uAmbientProduct;
+        uniform vec4 uDiffuseProduct;
+        uniform vec4 uSpecularProduct;
+        uniform bool uUseTexture;
+        uniform sampler2D uTexture_0_xiaohei;
+        uniform float uShininess;
+        varying vec3 N,L,E;
+        varying vec2 vTextureCoord;
+
+        void main() { 
+            vec4 fColor;
+
+            vec3 H = normalize( L + E );
+            vec4 ambient = uAmbientProduct;
+        
+            float Kd = max( dot(L, N), 0.0 );
+            vec4  diffuse = Kd*uDiffuseProduct;
+        
+            float Ks = pow( max(dot(N, H), 0.0), uShininess );
+            vec4  specular = Ks * uSpecularProduct;
+            
+            if( dot(L, N) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
+            fColor = ambient+diffuse+specular;
+            fColor.a = 1.0;
+            
+            if(uUseTexture){
+                gl_FragColor = fColor * texture2D(uTexture_0_xiaohei, vTextureCoord);
+            }else{
+                gl_FragColor = fColor;
+            }
+            
+        }
+    </script>
+
+    <script type="text/javascript" src="http://localhost:9090/common/webgl-utils.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/common/initShaders.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/common/MV.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/Light.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/Camera.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/CameraInteractor.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/Floor.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/Geometry.js"></script> 
+    <script type="text/javascript" src="http://localhost:9090/Scene.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/Xiaohei.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/Heixiu.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/App.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/Main.js"></script>
+
+</head>
+
+<body>
+    <canvas id="gl-canvas" width="700" height="512">
+        Oops ... your browser doesn't support the HTML5 canvas element
+    </canvas>
+    <div class="container">
+        <div class="row">
+            <h3>罗小黑</h3>
+            <button type="button" id="RotateLeft" class="btn btn-default">Left Rotate</button>
+            <button type="button" id="RotateRight" class="btn btn-primary">Right Rotate</button>
+            <button type="button" id="Forward" class="btn btn-success">Forward</button>
+            <button type="button" id="Backward" class="btn btn-info">Backwad</button>
+            <button type="button" id="Shrink" class="btn btn-warning">Shrink</button>
+            <button type="button" id="Expand" class="btn btn-danger">Expand</button>
+        </div>
+        <div class="row">
+            <h3>嘿咻1</h3>
+            <button type="button" id="RotateLeft1" class="btn btn-default">Left Rotate</button>
+            <button type="button" id="RotateRight1" class="btn btn-primary">Right Rotate</button>
+            <button type="button" id="Forward1" class="btn btn-success">Forward</button>
+            <button type="button" id="Backward1" class="btn btn-info">Backwad</button>
+            <button type="button" id="Shrink1" class="btn btn-warning">Shrink</button>
+            <button type="button" id="Expand1" class="btn btn-danger">Expand</button>
+        </div>
+        <div class="row">
+            <h3>嘿咻2</h3>
+            <button type="button" id="RotateLeft2" class="btn btn-default">Left Rotate</button>
+            <button type="button" id="RotateRight2" class="btn btn-primary">Right Rotate</button>
+            <button type="button" id="Forward2" class="btn btn-success">Forward</button>
+            <button type="button" id="Backward2" class="btn btn-info">Backwad</button>
+            <button type="button" id="Shrink2" class="btn btn-warning">Shrink</button>
+            <button type="button" id="Expand2" class="btn btn-danger">Expand</button>
+        </div>
+        <div class="row">
+            <h3>相机</h3>
+            <button type="button" id="in" class="btn btn-primary">Dolly In</button>
+            <button type="button" id="out" class="btn btn-primary">Dolly Out</button>
+        </div>
+        </container>
+        <img id="texImage" src="http://localhost:9090/face_big.jpg" hidden/>
+        <img id="heixiuImage" src="http://localhost:9090/face_heixiu2.jpg" hidden/>
+</body>
+
+</html>
