@@ -48,6 +48,13 @@ var Xiaohei = /** @class */ (function (_super) {
             .addChild(rightLeg);
         return xiaohei;
     };
+    Xiaohei.prototype.walkForward = function () {
+        var forward = MV_1.translate(0, 0, 1);
+        this.translation = MV_1.mult(forward, this.translation);
+    };
+    Xiaohei.prototype.walkBackward = function () { };
+    Xiaohei.prototype.rotateLeft = function () { };
+    Xiaohei.prototype.rotateRight = function () { };
     return Xiaohei;
 }(VirtualComponent_1.VirtualComponent));
 exports.Xiaohei = Xiaohei;

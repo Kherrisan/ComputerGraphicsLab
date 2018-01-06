@@ -16,7 +16,9 @@ import {
 } from "./Geometry";
 import { Material } from "./Material";
 
-export class Xiaohei extends VirtualComponent {
+export class Xiaohei extends VirtualComponent implements Interactable {
+  private position: vec3;
+  private angle: number;
   //小黑对象。
   public static build(gl: any, x: number, y: number, z: number): Xiaohei {
     //在x，y，z处正方向构造一只小黑。
@@ -51,6 +53,17 @@ export class Xiaohei extends VirtualComponent {
       .addChild(rightLeg);
     return xiaohei;
   }
+
+  public walkForward(): void {
+    let forward = translate(0, 0, 1);
+    this.translation = mult(forward, this.translation);
+  }
+
+  public walkBackward(): void {}
+
+  public rotateLeft(): void {}
+
+  public rotateRight(): void {}
 }
 
 class Head extends Component {

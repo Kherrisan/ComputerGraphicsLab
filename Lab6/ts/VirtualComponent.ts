@@ -24,7 +24,8 @@ export class VirtualComponent {
     } else {
       parentMatrix = new mat4();
     }
-    return mult(parentMatrix, mult(this.rotation, this.translation));
+    //单个部件变换矩阵的计算，先旋转该部件，然后平移，最后再做父对象的变换。
+    return mult(parentMatrix, mult(this.translation, this.rotation));
   }
 
   public draw(app: any): void {

@@ -713,6 +713,10 @@ var Light = /** @class */ (function () {
         light.position = new MV_1.vec4(0, 0, 10, 1);
         return light;
     };
+    Light.prototype.rotateLeft = function () { };
+    Light.prototype.rotateRight = function () { };
+    Light.prototype.walkForward = function () { };
+    Light.prototype.walkBackward = function () { };
     return Light;
 }());
 exports.Light = Light;
@@ -760,7 +764,8 @@ var VirtualComponent = /** @class */ (function () {
         else {
             parentMatrix = new MV_1.mat4();
         }
-        return MV_1.mult(parentMatrix, MV_1.mult(this.rotation, this.translation));
+        //单个部件变换矩阵的计算，先旋转该部件，然后平移，最后再做父对象的变换。
+        return MV_1.mult(parentMatrix, MV_1.mult(this.translation, this.rotation));
     };
     VirtualComponent.prototype.draw = function (app) {
         for (var _i = 0, _a = this.childs; _i < _a.length; _i++) {
@@ -823,6 +828,13 @@ var Xiaohei = /** @class */ (function (_super) {
             .addChild(rightLeg);
         return xiaohei;
     };
+    Xiaohei.prototype.walkForward = function () {
+        var forward = MV_1.translate(0, 0, 1);
+        this.translation = MV_1.mult(forward, this.translation);
+    };
+    Xiaohei.prototype.walkBackward = function () { };
+    Xiaohei.prototype.rotateLeft = function () { };
+    Xiaohei.prototype.rotateRight = function () { };
     return Xiaohei;
 }(VirtualComponent_1.VirtualComponent));
 exports.Xiaohei = Xiaohei;

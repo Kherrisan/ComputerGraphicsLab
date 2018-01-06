@@ -12,6 +12,10 @@ var Light = /** @class */ (function () {
         light.position = new MV_1.vec4(0, 0, 10, 1);
         return light;
     };
+    Light.prototype.rotateLeft = function () { };
+    Light.prototype.rotateRight = function () { };
+    Light.prototype.walkForward = function () { };
+    Light.prototype.walkBackward = function () { };
     return Light;
 }());
 exports.Light = Light;

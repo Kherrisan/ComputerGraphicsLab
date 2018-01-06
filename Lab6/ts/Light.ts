@@ -1,6 +1,6 @@
 import { vec3, vec4 } from "./common/MV";
 
-export class Light {
+export class Light implements Interactable {
   public position: vec4;
   private constructor(
     public ambient: any,
@@ -17,4 +17,12 @@ export class Light {
     light.position = new vec4(0, 0, 10, 1);
     return light;
   }
+
+  public rotateLeft(): void {}
+
+  public rotateRight(): void {}
+
+  public walkForward(): void {}
+
+  public walkBackward(): void {}
 }
