@@ -64,8 +64,12 @@ function App(ch, lh, dh) {
     Scene.addObject(heixiu);
     Scene.addObject(heixiu2);
 
+
     Xiaohei.build();
     Scene.addObject(Xiaohei);
+    Light.build();
+    Scene.addObject(Light);
+
 
     document.getElementById("RotateLeft").onclick = () => {
       Xiaohei.rotateLeft();
@@ -141,23 +145,31 @@ function App(ch, lh, dh) {
 
       if (e && e.keyCode == 37) {
         // camera.changeAzimuth(-1);
-        console.log("37");
-        Light.lightPosition[0] -= 0.5;
+        console.log("left");
+        Light.lightLeft();
         this.draw();
       } else if (e && e.keyCode == 38) {
         // camera.changeElevation(-1);
-        console.log("37");
-        Light.lightPosition[1] += 0.5;
+        console.log("up");
+        Light.lightUp();
         this.draw();
       } else if (e && e.keyCode == 39) {
-        console.log("39");
-        Light.lightPosition[0] += 0.5;
+        console.log("right");
+        Light.lightRight();
         this.draw();
         // camera.changeAzimuth(+1);
       } else if (e && e.keyCode == 40) {
         // camera.changeElevation(+1);
-        console.log("37");
-        Light.lightPosition[1] -= 0.5;
+        console.log("down");
+        Light.lightDown();
+        this.draw();
+      } else if (e && e.keyCode == 188) {
+        console.log("z++");
+        Light.lightForward();
+        this.draw();
+      } else if (e && e.keyCode == 190) {
+        console.log("z--");
+        Light.lightBackward();
         this.draw();
       } else if (e && e.keyCode == 87) {
         camera.setLocation(
@@ -177,6 +189,8 @@ function App(ch, lh, dh) {
         );
       }
     };
+    Xiaohei.updateTransformMatrix();
+    Light.updateTransformMatrix();
   };
 
   this.initTransform = () => {
@@ -200,7 +214,7 @@ function App(ch, lh, dh) {
       gl.uniform4fv(uSpecularProduct, specularProduct);
       gl.uniform1f(uShininess, object.shininess);
 
-      gl.uniform4fv(uLightPosition, Light.lightPosition);
+      gl.uniform4fv(uLightPosition, vec4(Light.lightPosition, 1.0));
     } else {
       gl.uniform4fv(uAmbientProduct, vec4());
       gl.uniform4fv(uDiffuseProduct, vec4());
