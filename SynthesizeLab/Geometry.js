@@ -468,11 +468,11 @@ function cuboid_generator(shape_data) {
     4,
     8,
     1,
-    5,
+    6,
     2,
     1,
     2,
-    6
+    5
   ];
 
   for (var k = 0; k < 36; k++) indice[k]--;
