@@ -42,10 +42,9 @@ var Xiaohei = {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
     gl.generateMipmap(gl.TEXTURE_2D);
 
-    //初始化四个数组。
+    //初始化三个数组。
     var vertices = [];
     var normals = [];
-    var colors = [];
     var textures = [];
 
     //shape_data是一个包含了一些生成顶点所必要的参数的数据结构。
@@ -54,11 +53,10 @@ var Xiaohei = {
       origin: vec3(0, 0, 0),
 
       axis_length: vec3(
-        Xiaohei.size * 5,
+        Xiaohei.size * 5, //脸宽
         Xiaohei.size * 4,
         Xiaohei.size * 4
-      ), 
-      height: 0,
+      ), //5:4:4
       angle_range_vertical: vec2(0, 180),
       angle_range_horizontal: vec2(0, 360),
 
@@ -68,32 +66,27 @@ var Xiaohei = {
       height:0,
       top_point:vec3(0,0,0), 
     };
-    //generate head vertices, textures and normals.
+    //生成头部顶点坐标和法向量。它是一个椭球。需要纹理，所以传入texture_coordinate来计算纹理坐标。
     var head_vertices = ellipsoid_generator(shape_data, texture_coordinate);
     vertices = vertices.concat(head_vertices.vertices);
     normals = normals.concat(head_vertices.normals);
     textures = textures.concat(head_vertices.textures);
 
-    shape_data.axis_length = vec2(Xiaohei.size * 5, Xiaohei.size * 3);
-    shape_data.angle_range_vertical = vec3(
+    shape_data.ellipse_axis = vec2(Xiaohei.size * 5, Xiaohei.size * 3);
+    shape_data.top_point = vec3(
       -Xiaohei.size * 6.4,
       +Xiaohei.size * 4,
       0
     );
-    shape_data.angle_range_horizontal = vec2(0, 360);
     //生成左耳朵顶点坐标和顶点法向量。它是一个圆锥。
     //由于耳朵不需要纹理，所以就传入texture_empty函数，生成纹理坐标的时候采用缺省坐标。
     var leftear_vertices = taper_generator(shape_data, texture_empty);
     //对左耳朵所有顶点作相对于小黑身体的变换。是一个平移变换，把耳朵移到头部左上方。
     Xiaohei.constructMatrix(
       translate(-Xiaohei.size * 0.1, +Xiaohei.size * 0.5, 0),
-      leftear_vertices.vertexPoint
+      leftear_vertices.vertices
     );
     //把新生成的顶点加入到数组中去。
-    vertices = vertices.concat(leftear_vertices.vertexPoint);
-    colors = colors.concat(
-      generateColors(leftear_vertices.vertexPoint.length, shape_data["color"])
-    );
     vertices = vertices.concat(leftear_vertices.vertices);
     normals = normals.concat(leftear_vertices.normals);
     textures = textures.concat(leftear_vertices.textures);
@@ -101,13 +94,12 @@ var Xiaohei = {
     //生成左耳朵内侧的部分的顶点坐标和顶点法向量。虽然在相同颜色下，不需要生成这个部分。
     //在能够指定颜色的时候，生成这个部分是有必要的，但是自从使用了明暗之后，整个罗小黑采用一个材质属性，所以显现出来的颜色是没有区别的。
     //所以现在这个部分其实是没有必要的，但是我们没有把他去掉。
-    shape_data.angle_range_vertical = vec3(
+    shape_data.top_point = vec3(
       -Xiaohei.size * 6.0,
       +Xiaohei.size * 3.6,
       +Xiaohei.size * 0.35
     );
-    shape_data.angle_range_horizontal = vec2(100, 200);
-    shape_data.color = vec4(0.605, 0.8, 0.601, 1);
+    shape_data.angle_range = vec2(100, 200);
     //生成左耳朵内部分的顶点坐标和法向量，它是一个圆锥。取缺省纹理坐标。
     var inner_leftear_vertices = taper_generator(shape_data, texture_empty);
     //对左内耳朵所有顶点作相对于小黑身体的变换。是一个平移变换，把耳朵移到头部左上方。
@@ -119,36 +111,30 @@ var Xiaohei = {
     normals = normals.concat(inner_leftear_vertices.normals);
     textures = textures.concat(inner_leftear_vertices.textures);
 
-    shape_data.angle_range_horizontal = vec2(0, 360);
-    shape_data.color = vec4(0, 0, 0, 1);
-    shape_data.axis_length = vec2(Xiaohei.size * 5, Xiaohei.size * 3);
-    shape_data.angle_range_vertical = vec3(
+    shape_data.angle_range = vec2(0, 360);
+    shape_data.ellipse_axis = vec2(Xiaohei.size * 5, Xiaohei.size * 3);
+    shape_data.top_point = vec3(
       Xiaohei.size * 6.4,
       Xiaohei.size * 4,
       0
     );
     //生成右耳朵顶点坐标和顶点法向量。它是一个圆锥。取缺省纹理坐标。
     var rightear_vertices = taper_generator(shape_data, texture_empty);
+    //对右耳朵所有顶点作相对于小黑身体的变换。是一个平移变换，把耳朵移到头部右上方。
     Xiaohei.constructMatrix(
       translate(+Xiaohei.size * 0.1, +Xiaohei.size * 0.5, 0),
-      rightear_vertices.vertexPoint
-    );
-    vertices = vertices.concat(rightear_vertices.vertexPoint);
-    //对右耳朵所有顶点作相对于小黑身体的变换。是一个平移变换，把耳朵移到头部右上方。
-    colors = colors.concat(
-      generateColors(rightear_vertices.vertexPoint.length, shape_data["color"])
+      rightear_vertices.vertices
     );
     vertices = vertices.concat(rightear_vertices.vertices);
     normals = normals.concat(rightear_vertices.normals);
     textures = textures.concat(rightear_vertices.textures);
 
-    shape_data.angle_range_vertical = vec3(
+    shape_data.top_point = vec3(
       +Xiaohei.size * 6.0,
       +Xiaohei.size * 3.6,
       +Xiaohei.size * 0.35
     );
-    shape_data.angle_range_horizontal = vec2(0, 90);
-    shape_data.color = vec4(0.605, 0.8, 0.601, 1);
+    shape_data.angle_range = vec2(0, 90);
     //生成右耳朵内侧部分顶点坐标和法向量。它是一个圆锥。取缺省纹理坐标。
     var inner_rightear_vertices = taper_generator(shape_data, texture_empty);
     //对右内耳朵所有顶点作相对于小黑身体的变换。是一个平移变换，把耳朵移到头部右上方。
@@ -159,29 +145,6 @@ var Xiaohei = {
     vertices = vertices.concat(inner_rightear_vertices.vertices);
     normals = normals.concat(inner_rightear_vertices.normals);
     textures = textures.concat(inner_rightear_vertices.textures);
-
-    shape_data = {
-      origin: vec3(0, 0, 0),
-      axis_length: vec3(
-        Xiaohei.size * 5,
-        Xiaohei.size * 4,
-        Xiaohei.size * 4
-      ),
-      height: 0,
-      angle_range_vertical: vec2(0, 180),
-      angle_range_horizontal: vec2(0, 360),
-      position_matrix: vec4(),
-      color: vec4(0, 0, 0, 1)
-    };
-
-    //生成头部顶点坐标和法向量。它是一个椭球。需要纹理，所以传入texture_coordinate来计算纹理坐标。
-    var head_vertices = ellipsoid_generator(shape_data, texture_coordinate);
-    vertices = vertices.concat(head_vertices.vertexPoint);
-    colors = colors.concat(
-      generateColors(head_vertices.vertexPoint.length, shape_data["color"])
-    );
-    normals = normals.concat(head_vertices.normals);
-    textures = textures.concat(head_vertices.textures);
 
     shape_data.axis_length = vec3(
       Xiaohei.size * 2,
@@ -199,10 +162,9 @@ var Xiaohei = {
     normals = normals.concat(body_vertices.normals);
     textures = textures.concat(body_vertices.textures);
 
-    shape_data.angle_range_horizontal = vec2(0, 360);
-    shape_data.color = vec4(0, 0, 0, 1);
+    shape_data.angle_range = vec2(0, 360);
     shape_data.height = Xiaohei.size * 4; //length
-    shape_data.axis_length = vec2(Xiaohei.size * 0.8, Xiaohei.size * 0.8);
+    shape_data.ellipse_axis = vec2(Xiaohei.size * 0.8, Xiaohei.size * 0.8);
     //生成左手顶点坐标和法向量。它是一个圆柱。取缺省纹理坐标。
     var lefthand_vertices = cylinder_generator(shape_data, texture_empty);
     //对左手所有顶点坐一个相对于身体的变换。先做一个平移，再做一个旋转。和右手是对称的。
@@ -231,8 +193,8 @@ var Xiaohei = {
     normals = normals.concat(righthand_vertices.normals);
     textures = textures.concat(righthand_vertices.textures);
 
-    shape_data.height = Xiaohei.size * 3;
-    shape_data.axis_length = vec2(Xiaohei.size * 0.8, Xiaohei.size * 0.8);
+    shape_data.height = Xiaohei.size * 3; //length
+    shape_data.ellipse_axis = vec2(Xiaohei.size * 0.8, Xiaohei.size * 0.8);
     //生成左腿顶点坐标和法向量。它是一个圆柱。取缺省纹理坐标。
     var leftfoot_vertices = cylinder_generator(shape_data, texture_empty);
     //对左腿所有顶点坐一个相对于身体的变换。先做一个平移，再做一个旋转。和右腿是对称的。
