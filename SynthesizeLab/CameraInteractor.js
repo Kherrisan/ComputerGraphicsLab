@@ -31,6 +31,7 @@ function CameraInteractor(camera, canvas) {
     var lastX = this.x;
     var lastY = this.y;
     //用新的xy坐标减去上一次的xy坐标。
+    //并用新的坐标替换旧的坐标。
     this.x = ev.clientX;
     this.y = ev.clientY;
     var dx = this.x - lastX;

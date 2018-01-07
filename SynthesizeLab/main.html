@@ -9,7 +9,7 @@
 
     <script id="vertex-shader" type="x-shader/x-vertex">
         uniform vec4 uLightPosition;
-        uniform mat3 uNMatrix;      // normal matrix
+
         attribute vec4 aVertexNormal;       // normal vertex
         varying vec3 N,L,E;
         varying vec2 vTextureCoord;
@@ -18,30 +18,16 @@
         uniform mat4 uMVMatrix;
         uniform mat4 uTMatrix;
         uniform bool uPerVertexColor;
-        uniform bool uWireframe;
-        uniform vec4 uColor;
         uniform bool uUseTexture;
         attribute vec3 aVertexPosition;
-        attribute vec4 aVertexColor;
         attribute vec2 aTextureCoord;
 
         void main()
         {
-            vec4 fColor;
             gl_Position = uPMatrix * uMVMatrix * uTMatrix * vec4(aVertexPosition, 1.0);
-            if (uPerVertexColor)
-            {
-                fColor = aVertexColor;
-            }
-            else
-            {
-                fColor = uColor;
-            }
-
             vec3 pos =  (uMVMatrix * uTMatrix * vec4(aVertexPosition, 1.0)).xyz;
-            // check for directional light
             if(uLightPosition.w ==0.0) L=normalize(uLightPosition.xyz);
-            else L = normalize( uLightPosition.xyz - pos );
+            else L = normalize( uLightPosition.xyz - pos  );
 
             E = -normalize(pos);
             N = aVertexNormal.xyz;
@@ -75,7 +61,10 @@
             float Ks = pow( max(dot(N, H), 0.0), uShininess );
             vec4  specular = Ks * uSpecularProduct;
             
-            if( dot(L, N) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
+            if( dot(L, N) < 0.0 ) 
+            {
+                specular = vec4(0.0, 0.0, 0.0, 1.0);
+            }
             fColor = ambient+diffuse+specular;
             fColor.a = 1.0;
             
@@ -97,6 +86,7 @@
     <script type="text/javascript" src="http://localhost:9090/Floor.js"></script>
     <script type="text/javascript" src="http://localhost:9090/Geometry.js"></script> 
     <script type="text/javascript" src="http://localhost:9090/Scene.js"></script>
+    <script type="text/javascript" src="http://localhost:9090/Wall.js"></script>
     <script type="text/javascript" src="http://localhost:9090/Xiaohei.js"></script>
     <script type="text/javascript" src="http://localhost:9090/Heixiu.js"></script>
     <script type="text/javascript" src="http://localhost:9090/App.js"></script>
@@ -140,6 +130,16 @@
             <h3>相机</h3>
             <button type="button" id="in" class="btn btn-primary">Dolly In</button>
             <button type="button" id="out" class="btn btn-primary">Dolly Out</button>
+            <button type="button" id="walk" class="btn btn-primary">Free Walk</button>
+            <button type="button" id="stop_move" class="btn btn-primary">Stop Walk</button>
+        </div>
+        <div class="row">
+            <h3>视点</h3>
+            <button type="button" id="down_look" class="btn btn-primary">俯视图</button>
+            <button type="button" id="toward_look" class="btn btn-primary">正视图</button>
+            <button type="button" id="left_look" class="btn btn-primary">左视图</button>
+            <button type="button" id="right_look" class="btn btn-primary">右视图</button>
+            <button type="button" id="back_look" class="btn btn-primary">后视图</button>
         </div>
         </container>
         <img id="texImage" src="http://localhost:9090/face_big.jpg" hidden/>

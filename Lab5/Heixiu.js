@@ -1,9 +1,11 @@
 function Heixiu() {
   //材质属性
-  this.materialAmbient = vec4(1.0, 0.0, 1.0, 1.0);
-  this.materialDiffuse = vec4(1.0, 0.0, 0.0, 1.0);
-  this.materialSpecular = vec4(1.0, 1.0, 0.0, 1.0);
-  this.shininess = 10.0;
+  this.materialAmbient = vec4(0.1, 0.1, 0.1, 1.0);
+  this.materialDiffuse = vec4(0.2, 0.2, 0.2, 1.0);
+  this.materialSpecular = vec4(0.01, 0.01, 0.01, 1.0);
+  this.shininess = 1.0;
+  this.useTexture = true;
+  this.texture = null;
   this.FORWARD_STEP = 0.5;
   this.ROTATE_STEP = 5;
   this.RESIZE_STEP = 0.1;
@@ -14,19 +16,43 @@ function Heixiu() {
   this.vbo = null;
   this.cbo = null;
   this.nbo = null;
+  this.tbo = null;
   this.vertexNum = 0;
   this.transformMatrix = null;
   this.onChange = null;
 } //indicate some prototype parameters for Heixiu.
 
-Heixiu.prototype.setLocation = function(a, b, c) {
+
+Heixiu.prototype.texture_empty = function (theta, fai, size) {
+  return vec2(0, 0);
+}
+
+Heixiu.prototype.texture_coordinate = function (x, y, z, height, width) {
+  if (z < 0) {
+    return vec2(0, 0);
+  }
+  x = (x + width / 2.0) / width;
+  y = (-y + height / 2.0) / height;
+  return vec2(x, y);
+}
+Heixiu.prototype.setLocation = function (a, b, c) {
   this.position = vec3(a, b, c);
   this.updateTransformMatrix();
 };
 
-Heixiu.prototype.build = function() {
+Heixiu.prototype.build = function () {
+
+  var image = document.getElementById("heixiuImage");
+  this.texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, this.texture);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.generateMipmap(gl.TEXTURE_2D);
+
+  var textures = [];
   var vertices = [];
-  var normals=[];
+  var normals = [];
   //init shape_data
   var shape_data = {
     origin: vec3(0, 0, 0),
@@ -35,35 +61,38 @@ Heixiu.prototype.build = function() {
     angle_range_horizontal: vec2(0, 360),
     color: vec4(0, 0, 0, 1)
   };
-  var body_vertices = ellipsoid_generator(shape_data);
+  var body_vertices = ellipsoid_generator(shape_data, texture_coordinate);
   vertices = vertices.concat(body_vertices.vertexPoint);
+  textures = textures.concat(body_vertices.textures);
   var colors = generateColors(body_vertices.vertexPoint.length, shape_data["color"]);
-  normals=normals.concat(body_vertices.normals);
+  normals = normals.concat(body_vertices.normals);
   //ears shape_data inition.
   shape_data.axis_length = vec2(this.size * 1.5, this.size * 1.5);
   shape_data.angle_range_vertical = vec3(0, 2 * this.size + 0.5, 0);
   //set and get right ear vertices.
-  var rightear_vertices = taper_generator(shape_data);
+  var rightear_vertices = taper_generator(shape_data, texture_empty);
   this.constructMatrix(
     mult(translate(-this.size * 2.5, this.size * 2, 0), rotateZ(-20)),
     rightear_vertices.vertexPoint
   );
   vertices = vertices.concat(rightear_vertices.vertexPoint);
+  textures = textures.concat(rightear_vertices.textures);
   colors = colors.concat(
     generateColors(rightear_vertices.vertexPoint.length, shape_data["color"])
   );
-  normals=normals.concat(rightear_vertices.normals);
+  normals = normals.concat(rightear_vertices.normals);
   //set and get left ear vertices.
-  var leftear_vertices = taper_generator(shape_data);
+  var leftear_vertices = taper_generator(shape_data, texture_empty);
   this.constructMatrix(
     mult(translate(this.size * 2.5, this.size * 2, 0), rotateZ(20)),
     leftear_vertices.vertexPoint
   );
   vertices = vertices.concat(leftear_vertices.vertexPoint);
+  textures = textures.concat(leftear_vertices.textures);
   colors = colors.concat(
     generateColors(leftear_vertices.vertexPoint.length, shape_data["color"])
   );
-  normals=normals.concat(leftear_vertices.normals);
+  normals = normals.concat(leftear_vertices.normals);
 
   this.vertexNum = vertices.length;
   this.vbo = gl.createBuffer();
@@ -81,10 +110,13 @@ Heixiu.prototype.build = function() {
   gl.bufferData(gl.ARRAY_BUFFER, flatten(normals), gl.STATIC_DRAW);
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-  this.updateTransformMatrix();
+  this.tbo = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.tbo);
+  gl.bufferData(gl.ARRAY_BUFFER, flatten(textures), gl.STATIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
 };
 
-Heixiu.prototype.updateTransformMatrix = function() {
+Heixiu.prototype.updateTransformMatrix = function () {
   //update transform matrix
   var RE = scalem(this.size, this.size, this.size);
   var T = translate(this.position[0], this.position[1], this.position[2]);
@@ -96,7 +128,7 @@ Heixiu.prototype.updateTransformMatrix = function() {
   }
 };
 
-Heixiu.prototype.constructMatrix = function(matrix, vertices) {
+Heixiu.prototype.constructMatrix = function (matrix, vertices) {
   for (var i = 0; i < vertices.length; i++) {
     var temp = mult(
       matrix,
@@ -106,7 +138,7 @@ Heixiu.prototype.constructMatrix = function(matrix, vertices) {
   }
 };
 
-Heixiu.prototype.walkForward = function() {
+Heixiu.prototype.walkForward = function () {
   this.position[0] +=
     this.FORWARD_STEP * -1 * Math.sin(radians(this.rotateAngle));
   this.position[2] += this.FORWARD_STEP * Math.cos(radians(this.rotateAngle));
@@ -116,7 +148,7 @@ Heixiu.prototype.walkForward = function() {
   }
 };
 
-Heixiu.prototype.walkBackward = function() {
+Heixiu.prototype.walkBackward = function () {
   this.position[0] += this.FORWARD_STEP * Math.sin(radians(this.rotateAngle));
   this.position[2] +=
     this.FORWARD_STEP * -1 * Math.cos(radians(this.rotateAngle));
@@ -126,7 +158,7 @@ Heixiu.prototype.walkBackward = function() {
   }
 };
 
-Heixiu.prototype.rotateLeft = function() {
+Heixiu.prototype.rotateLeft = function () {
   this.rotateAngle -= this.ROTATE_STEP;
   this.updateTransformMatrix();
   if (this.onChange) {
@@ -134,7 +166,7 @@ Heixiu.prototype.rotateLeft = function() {
   }
 };
 
-Heixiu.prototype.rotateRight = function() {
+Heixiu.prototype.rotateRight = function () {
   this.rotateAngle += this.ROTATE_STEP;
   this.updateTransformMatrix();
   if (this.onChange) {
@@ -142,7 +174,7 @@ Heixiu.prototype.rotateRight = function() {
   }
 };
 
-Heixiu.prototype.shrink = function() {
+Heixiu.prototype.shrink = function () {
   this.size -= this.RESIZE_STEP;
   this.updateTransformMatrix();
   if (this.onChange) {
@@ -150,7 +182,7 @@ Heixiu.prototype.shrink = function() {
   }
 };
 
-Heixiu.prototype.expand = function() {
+Heixiu.prototype.expand = function () {
   this.size += this.RESIZE_STEP;
   this.updateTransformMatrix();
   if (this.onChange) {
