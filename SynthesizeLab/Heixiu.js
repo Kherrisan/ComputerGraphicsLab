@@ -1,4 +1,3 @@
-
 //heixiu的纹理二维坐标和顶点坐标的映射函数，这里默认使用图片的(0,0)，是一个黑色的像素。
 //也就是说，如果传入这个函数，永远只能得到黑色。
 Heixiu.prototype.texture_empty = function (theta, fai, size) {
