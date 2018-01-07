@@ -56,53 +56,53 @@ Heixiu.prototype.build = function () {
   //init shape_data
   var shape_data = {
     origin: vec3(0, 0, 0),
+
     axis_length: vec3(this.size * 5, this.size * 4, this.size * 4), //5:4:4
     angle_range_vertical: vec2(0, 180),
     angle_range_horizontal: vec2(0, 360),
-    color: vec4(0, 0, 0, 1)
+
+    ellipse_axis: vec2(0, 0, 0),
+    top_point: vec3(0, 0, 0),
+    angle_range: vec2(0, 360),
   };
+  //set and get body vertices, textures and normals.
   var body_vertices = ellipsoid_generator(shape_data, texture_coordinate);
-  vertices = vertices.concat(body_vertices.vertexPoint);
+  vertices = vertices.concat(body_vertices.vertices);
   textures = textures.concat(body_vertices.textures);
-  var colors = generateColors(body_vertices.vertexPoint.length, shape_data["color"]);
   normals = normals.concat(body_vertices.normals);
-  //ears shape_data inition.
-  shape_data.axis_length = vec2(this.size * 1.5, this.size * 1.5);
-  shape_data.angle_range_vertical = vec3(0, 2 * this.size + 0.5, 0);
-  //set and get right ear vertices.
+
+  //right ear shape_data initialization.
+  shape_data.ellipse_axis = vec2(this.size * 1.5, this.size * 1.5);
+  shape_data.top_point = vec3(0, 2 * this.size + 0.5, 0);
+
+  //set and get right ear vertices, textures and normals.
   var rightear_vertices = taper_generator(shape_data, texture_empty);
   this.constructMatrix(
     mult(translate(-this.size * 2.5, this.size * 2, 0), rotateZ(-20)),
-    rightear_vertices.vertexPoint
+    rightear_vertices.vertices
   );
-  vertices = vertices.concat(rightear_vertices.vertexPoint);
+
+  //left ear shape_data initialization.
+  vertices = vertices.concat(rightear_vertices.vertices);
   textures = textures.concat(rightear_vertices.textures);
-  colors = colors.concat(
-    generateColors(rightear_vertices.vertexPoint.length, shape_data["color"])
-  );
   normals = normals.concat(rightear_vertices.normals);
+
   //set and get left ear vertices.
   var leftear_vertices = taper_generator(shape_data, texture_empty);
   this.constructMatrix(
     mult(translate(this.size * 2.5, this.size * 2, 0), rotateZ(20)),
-    leftear_vertices.vertexPoint
+    leftear_vertices.vertices
   );
-  vertices = vertices.concat(leftear_vertices.vertexPoint);
+
+
+  vertices = vertices.concat(leftear_vertices.vertices);
   textures = textures.concat(leftear_vertices.textures);
-  colors = colors.concat(
-    generateColors(leftear_vertices.vertexPoint.length, shape_data["color"])
-  );
   normals = normals.concat(leftear_vertices.normals);
 
   this.vertexNum = vertices.length;
   this.vbo = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
   gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
-  gl.bindBuffer(gl.ARRAY_BUFFER, null);
-
-  this.cbo = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.cbo);
-  gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
   this.nbo = gl.createBuffer();

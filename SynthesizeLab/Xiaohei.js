@@ -11,12 +11,6 @@ function texture_coordinate(x, y, z, height, width) {
   return vec2(x, y);
 }
 
-// function texture_coordinate(theta, fai, size) {
-//   var y = ((theta / 360 * size + size / 4) % size) / size;
-//   var x = fai / 180;
-//   return vec2(x, y);
-// }
-
 var Xiaohei = {
   //材质属性
   materialAmbient: vec4(0.1, 0.1, 0.1, 1.0),
@@ -24,7 +18,7 @@ var Xiaohei = {
   materialSpecular: vec4(0.01, 0.01, 0.01, 1.0),
   shininess: 1.0,
   texture: null,
-  // CurModelViewMatrix: mat4(), //当前变换矩阵
+
   FORWARD_STEP: 0.2, //平移步长
   ROTATE_STEP: 5,
   RotateAngle: 0, //立方体旋转角度
@@ -37,8 +31,6 @@ var Xiaohei = {
   tbo: null,
   size: 0.5,
   vertexNum: 0,
-  // wireframe: false,
-  // perVertexColor: true,
   useTexture: true,
   transformMatrix: null,
   perVertexColor: true,
@@ -70,213 +62,173 @@ var Xiaohei = {
     //init shape_data
     var shape_data = {
       origin: vec3(0, 0, 0),
+
       axis_length: vec3(
         Xiaohei.size * 5, //脸宽
         Xiaohei.size * 4,
         Xiaohei.size * 4
       ), //5:4:4
-      height: 0,
       angle_range_vertical: vec2(0, 180),
       angle_range_horizontal: vec2(0, 360),
-      position_matrix: vec4(),
-      color: vec4(0, 0, 0, 1)
-    };
 
-    //generate left ear vertices and colors
-    shape_data.axis_length = vec2(Xiaohei.size * 5, Xiaohei.size * 3);
-    shape_data.angle_range_vertical = vec3(
+      ellipse_axis:vec2(0,0),
+      angle_range:vec2(0,360),
+
+      height:0,
+      top_point:vec3(0,0,0), 
+    };
+    //generate head vertices, textures and normals.
+    var head_vertices = ellipsoid_generator(shape_data, texture_coordinate);
+    vertices = vertices.concat(head_vertices.vertices);
+    normals = normals.concat(head_vertices.normals);
+    textures = textures.concat(head_vertices.textures);
+
+    //left ear shape_data initialization.
+    shape_data.ellipse_axis = vec2(Xiaohei.size * 5, Xiaohei.size * 3);
+    shape_data.top_point = vec3(
       -Xiaohei.size * 6.4,
       +Xiaohei.size * 4,
       0
     );
-    shape_data.angle_range_horizontal = vec2(0, 360);
+
+    //generate left ear vertices, textures and normals.
     var leftear_vertices = taper_generator(shape_data, texture_empty);
     Xiaohei.constructMatrix(
       translate(-Xiaohei.size * 0.1, +Xiaohei.size * 0.5, 0),
-      leftear_vertices.vertexPoint
+      leftear_vertices.vertices
     );
-    vertices = vertices.concat(leftear_vertices.vertexPoint);
-    colors = colors.concat(
-      generateColors(leftear_vertices.vertexPoint.length, shape_data["color"])
-    );
+    vertices = vertices.concat(leftear_vertices.vertices);
     normals = normals.concat(leftear_vertices.normals);
     textures = textures.concat(leftear_vertices.textures);
 
-    // generate inner left ear vertices and colors
-    shape_data.angle_range_vertical = vec3(
+    //inner left ear shape_data initialization.
+    shape_data.top_point = vec3(
       -Xiaohei.size * 6.0,
       +Xiaohei.size * 3.6,
       +Xiaohei.size * 0.35
     );
-    shape_data.angle_range_horizontal = vec2(100, 200);
-    shape_data.color = vec4(0.605, 0.8, 0.601, 1);
+    shape_data.angle_range = vec2(100, 200);
+    //generate inner left ear vertices, textures and normals.
     var inner_leftear_vertices = taper_generator(shape_data, texture_empty);
     Xiaohei.constructMatrix(
       translate(-Xiaohei.size * 0.1, +Xiaohei.size * 0.5, 0),
-      inner_leftear_vertices.vertexPoint
+      inner_leftear_vertices.vertices
     );
-    vertices = vertices.concat(inner_leftear_vertices.vertexPoint);
-    colors = colors.concat(
-      generateColors(
-        inner_leftear_vertices.vertexPoint.length,
-        shape_data["color"]
-      )
-    );
+    vertices = vertices.concat(inner_leftear_vertices.vertices);
     normals = normals.concat(inner_leftear_vertices.normals);
     textures = textures.concat(inner_leftear_vertices.textures);
 
-    //generate right ear vertices and colors
-    shape_data.angle_range_horizontal = vec2(0, 360);
-    shape_data.color = vec4(0, 0, 0, 1);
-    shape_data.axis_length = vec2(Xiaohei.size * 5, Xiaohei.size * 3);
-    shape_data.angle_range_vertical = vec3(
+    //right ear shape_data initialization.
+    shape_data.angle_range = vec2(0, 360);
+    shape_data.ellipse_axis = vec2(Xiaohei.size * 5, Xiaohei.size * 3);
+    shape_data.top_point = vec3(
       Xiaohei.size * 6.4,
       Xiaohei.size * 4,
       0
     );
+    //generate right ear vertices, textures and normals.
     var rightear_vertices = taper_generator(shape_data, texture_empty);
     Xiaohei.constructMatrix(
       translate(+Xiaohei.size * 0.1, +Xiaohei.size * 0.5, 0),
-      rightear_vertices.vertexPoint
+      rightear_vertices.vertices
     );
-    vertices = vertices.concat(rightear_vertices.vertexPoint);
-    colors = colors.concat(
-      generateColors(rightear_vertices.vertexPoint.length, shape_data["color"])
-    );
+    vertices = vertices.concat(rightear_vertices.vertices);
     normals = normals.concat(rightear_vertices.normals);
     textures = textures.concat(rightear_vertices.textures);
 
-    // generate inner right ear vertices and colors
-    shape_data.angle_range_vertical = vec3(
+    //inner right ear shape_data initialization.
+    shape_data.top_point = vec3(
       +Xiaohei.size * 6.0,
       +Xiaohei.size * 3.6,
       +Xiaohei.size * 0.35
     );
-    shape_data.angle_range_horizontal = vec2(0, 90);
-    shape_data.color = vec4(0.605, 0.8, 0.601, 1);
+    shape_data.angle_range = vec2(0, 90);
+    //generate inner right ear vertices, textures and normals.
     var inner_rightear_vertices = taper_generator(shape_data, texture_empty);
     Xiaohei.constructMatrix(
       translate(+Xiaohei.size * 0.1, +Xiaohei.size * 0.5, 0),
-      inner_rightear_vertices.vertexPoint
+      inner_rightear_vertices.vertices
     );
-    vertices = vertices.concat(inner_rightear_vertices.vertexPoint);
-    colors = colors.concat(
-      generateColors(
-        inner_rightear_vertices.vertexPoint.length,
-        shape_data["color"]
-      )
-    );
+    vertices = vertices.concat(inner_rightear_vertices.vertices);
     normals = normals.concat(inner_rightear_vertices.normals);
     textures = textures.concat(inner_rightear_vertices.textures);
 
-    shape_data = {
-      origin: vec3(0, 0, 0),
-      axis_length: vec3(
-        Xiaohei.size * 5, //脸宽
-        Xiaohei.size * 4,
-        Xiaohei.size * 4
-      ), //5:4:4
-      height: 0,
-      angle_range_vertical: vec2(0, 180),
-      angle_range_horizontal: vec2(0, 360),
-      position_matrix: vec4(),
-      color: vec4(0, 0, 0, 1)
-    };
 
-    //generate head vertices and colors
-    var head_vertices = ellipsoid_generator(shape_data, texture_coordinate);
-    vertices = vertices.concat(head_vertices.vertexPoint);
-    colors = colors.concat(
-      generateColors(head_vertices.vertexPoint.length, shape_data["color"])
-    );
-    normals = normals.concat(head_vertices.normals);
-    textures = textures.concat(head_vertices.textures);
-
-    //generate body vertices and colors
+    //body shape_data initialization.
     shape_data.axis_length = vec3(
       Xiaohei.size * 2,
       Xiaohei.size * 4,
       Xiaohei.size * 2
     );
+    //generate body vertices, textures and normals.
     var body_vertices = ellipsoid_generator(shape_data, texture_empty);
     Xiaohei.constructMatrix(
       translate(0, -Xiaohei.size * 3.5, -Xiaohei.size * 4.5),
-      body_vertices.vertexPoint
+      body_vertices.vertices
     );
-    vertices = vertices.concat(body_vertices.vertexPoint);
-    colors = colors.concat(
-      generateColors(body_vertices.vertexPoint.length, shape_data["color"])
-    );
+    vertices = vertices.concat(body_vertices.vertices);
     normals = normals.concat(body_vertices.normals);
     textures = textures.concat(body_vertices.textures);
 
-    //generate hand vertices and colors
-    shape_data.angle_range_horizontal = vec2(0, 360);
-    shape_data.color = vec4(0, 0, 0, 1);
+    //left hand shape_data initialization.
+    shape_data.angle_range = vec2(0, 360);
     shape_data.height = Xiaohei.size * 4; //length
-    shape_data.axis_length = vec2(Xiaohei.size * 0.8, Xiaohei.size * 0.8);
+    shape_data.ellipse_axis = vec2(Xiaohei.size * 0.8, Xiaohei.size * 0.8);
+
+    //generate left hand vertices, textures and normals.
     var lefthand_vertices = cylinder_generator(shape_data, texture_empty);
     Xiaohei.constructMatrix(
       mult(
         mult(rotateZ(15), rotateX(15)),
         translate(-Xiaohei.size * 0.2, -Xiaohei.size * 5, -Xiaohei.size * 3)
       ),
-      lefthand_vertices.vertexPoint
+      lefthand_vertices.vertices
     );
-    vertices = vertices.concat(lefthand_vertices.vertexPoint);
-    colors = colors.concat(
-      generateColors(lefthand_vertices.vertexPoint.length, shape_data["color"])
-    );
+    vertices = vertices.concat(lefthand_vertices.vertices);
     normals = normals.concat(lefthand_vertices.normals);
     textures = textures.concat(lefthand_vertices.textures);
 
-    //right hand
+    //right hand shape_data initialization.
     var righthand_vertices = cylinder_generator(shape_data, texture_empty);
+    //generate right hand vertices, textures and normals.
     Xiaohei.constructMatrix(
       mult(
         mult(rotateZ(-15), rotateX(15)),
         translate(+Xiaohei.size * 0.2, -Xiaohei.size * 5, -Xiaohei.size * 3)
       ),
-      righthand_vertices.vertexPoint
+      righthand_vertices.vertices
     );
-    vertices = vertices.concat(righthand_vertices.vertexPoint);
-    colors = colors.concat(
-      generateColors(righthand_vertices.vertexPoint.length, shape_data["color"])
-    );
+    vertices = vertices.concat(righthand_vertices.vertices);
     normals = normals.concat(righthand_vertices.normals);
     textures = textures.concat(righthand_vertices.textures);
 
-    //generate foot vertices and colors
+    //left foot shape_data initialization.
     shape_data.height = Xiaohei.size * 3; //length
-    shape_data.axis_length = vec2(Xiaohei.size * 0.8, Xiaohei.size * 0.8);
+    shape_data.ellipse_axis = vec2(Xiaohei.size * 0.8, Xiaohei.size * 0.8);
+    //generate left foot vertices, textures and normals.
     var leftfoot_vertices = cylinder_generator(shape_data, texture_empty);
     Xiaohei.constructMatrix(
       mult(
         mult(rotateZ(15), rotateX(15)),
         translate(-Xiaohei.size * 0, -Xiaohei.size * 4, -Xiaohei.size * 7.5)
       ),
-      leftfoot_vertices.vertexPoint
+      leftfoot_vertices.vertices
     );
-    vertices = vertices.concat(leftfoot_vertices.vertexPoint);
-    colors = colors.concat(
-      generateColors(leftfoot_vertices.vertexPoint.length, shape_data["color"])
-    );
+    vertices = vertices.concat(leftfoot_vertices.vertices);
     normals = normals.concat(leftfoot_vertices.normals);
     textures = textures.concat(leftfoot_vertices.textures);
 
-    //right foot
+    //right foot shape_data initialization.
     var rightfoot_vertices = cylinder_generator(shape_data, texture_empty);
+    //generate right foot vertices, textures and normals.
     Xiaohei.constructMatrix(
       mult(
         mult(rotateZ(-15), rotateX(15)),
         translate(+Xiaohei.size * 0, -Xiaohei.size * 4, -Xiaohei.size * 7.5)
       ),
-      rightfoot_vertices.vertexPoint
+      rightfoot_vertices.vertices
     );
-    vertices = vertices.concat(rightfoot_vertices.vertexPoint);
-    colors = colors.concat(
-      generateColors(rightfoot_vertices.vertexPoint.length, shape_data["color"])
-    );
+    vertices = vertices.concat(rightfoot_vertices.vertices);
     normals = normals.concat(rightfoot_vertices.normals);
     textures = textures.concat(rightfoot_vertices.textures);
 

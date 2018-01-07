@@ -377,6 +377,7 @@ function App(ch, lh, dh) {
       gl.disableVertexAttribArray(aVertexNormal);
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
+      gl.disableVertexAttribArray(aVertexNormal);
     }
   };
 

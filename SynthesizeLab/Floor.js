@@ -1,10 +1,10 @@
 var Floor = {
-  Changable: false,
   lines: 50,
   halfWidth: 50,
   wireframe: true,
   color: [0.7, 0.7, 0.7, 1],
   perVertexColor: false,
+  useTexture:false,
   indicesNum: false,
   build: (l, hw) => {
     if (l) Floor.lines = l;
