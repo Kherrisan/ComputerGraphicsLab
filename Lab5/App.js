@@ -321,7 +321,7 @@ function App(ch, lh, dh) {
         gl.drawArrays(gl.TRIANGLES, 0, object.vertexNum);
       }
 
-      gl.disableVertexAttribArray(aVertexPosition);
+      
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
     }
