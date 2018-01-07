@@ -18,17 +18,19 @@
 // };
 
 /*
-    This is the function to create an ellipsoid and do some transform on it based on rotate_mat matrix.
+    This is the function to create an ellipsoid points.
     @param shape_data:
         this parameter contains the necessary information for creating an ellipsoid. It should be defined
         in Javascript Object Form. The object should contains these properties:
-        shape_data{origin,axis_length,angle_range_vertical,angle_range_horizontal,color}
+        shape_data{origin,axis_length,angle_range_vertical,angle_range_horizontal}
             1. property "origin" means the center point of the ellipsoid. It should be an array with 3 elements.
             2. property "axis_length" defines the size of the ellipsoid. It should be an array with 3 elements.
             3. property "angle_range_vertical" defines the range of the ellipsoid to be drawn vertically. It
                should be an array with 2 elements. And the range of these two elements is 0 to 180.
             4. property "angle_range_horizontal" defines the range of the ellipsoid to be drawn horizontally.
                It should be an array with 2 elements. And the range of these two lements is 0 to 360.
+<<<<<<< HEAD
+=======
             5. property "color" defines the color of the ellipsoid. It should be a four dimension vector.
 
     @param rotate_mat:
@@ -36,6 +38,7 @@
 
     @param program:
         the program is a pointer to shaders.
+>>>>>>> cd63499a9ddb5bae5a9bcc9da36f1c7381d66640
  */
 function draw_ellipsoid(vertices, colors, rotate_mat) {
   // for (var i = 0; i < 12; i++) {
@@ -45,17 +48,19 @@ function draw_ellipsoid(vertices, colors, rotate_mat) {
 }
 
 /*
-    This is the function to create a cylinder and do some transform on it based on rotate_mat matrix.
+    This is the function to create a cylinder points.
     @param shape_data:
         this parameter contains the necessary information for creating an cylinder. It should be defined
         in Javascript Object Form. The object should contains these properties:
-        shape_data{origin,ellipse_axis,height,angle_range,color}
+        shape_data{origin,ellipse_axis,height,angle_range}
             1. property "origin" means the center point of the ellipsoid. It should be an array with 3 elements.
             2. property "ellipse_axis" defines the size of the bottom ellipse of the cylinder. It should be an
                array with 2 elements.
             3. property "height" defines the height of the cylinder. It should be number.
             4. property "angle_range" defines the range of the cylinder to be drawn horizontally.
                It should be an array with 2 elements. And the range of these two elements is 0 to 360.
+<<<<<<< HEAD
+=======
             5. property "color" defines the color of the ellipsoid. It should be a four dimension vector.
 
     @param rotate_mat:
@@ -63,6 +68,7 @@ function draw_ellipsoid(vertices, colors, rotate_mat) {
 
     @param program:
         the program is a pointer to shaders.
+>>>>>>> cd63499a9ddb5bae5a9bcc9da36f1c7381d66640
  */
 function draw_cylinder(vertices, colors, rotate_mat) {
   // for (var i = 0; i < 12; i++) {
@@ -71,16 +77,18 @@ function draw_cylinder(vertices, colors, rotate_mat) {
 }
 
 /*
-    This is the function to create a taper and do some transform on it based on rotate_mat matrix.
+    This is the function to create a taper points.
     @param shape_data:
         this parameter contains the necessary information for creating an ellipsoid. It should be defined
         in Javascript Object Form. The object should contains these properties:
-        shape_data{origin,axis_length,angle_range_vertical,angle_range_horizontal,color}
+        shape_data{origin,axis_length,angle_range_vertical,angle_range_horizontal}
             1. property "origin" means the center point of the bottom of the taper. It should be an array with 3 elements.
             2. property "ellipse_axis" defines the size of the ellipsoid. It should be an array with 3 elements.
             3. property "top_point" defines the top point position. It should be an array with 3 elements.
             4. property "angle_range" defines the range of the bottom ellipse of the taper. It should be an
                array with 2 elements, ranging from 0 to 360.
+<<<<<<< HEAD
+=======
             5. property "color" defines the color of the taper. It should be a four dimension vector.
 
     @param rotate_mat:
@@ -88,6 +96,7 @@ function draw_cylinder(vertices, colors, rotate_mat) {
 
     @param program:
         the program is a pointer to shaders.
+>>>>>>> cd63499a9ddb5bae5a9bcc9da36f1c7381d66640
  */
 function draw_taper(vertices, colors, rotate_mat) {
   // for (var i = 0; i < 12; i++) {
@@ -409,6 +418,70 @@ function cylinder_generator(shape_data, texture_generator) {
     textures: textures
   };
 }
+<<<<<<< HEAD
+
+/*
+    This is the function to create a cuboid points.
+    @param shape_data:
+        this parameter contains the necessary information for creating an ellipsoid. It should be defined
+        in Javascript Object Form. The object should contains these properties:
+        shape_data{bottom_leftup, bottom_leftdown, bottom_rightup, bottom_rightdown, height}
+            1. property "bottom_leftup" means the left-up point of the bottom of the cuboid. It should be an array with 3 elements.
+            2. property "bottom_leftdown" means the left-down point of the bottom of the cuboid. It should be an array with 3 elements.
+            3. property "bottom_rightup" means the right-up point of the bottom of the cuboid. It should be an array with 3 elements.
+            4. property "bottom_rightdown" means the left-up point of the bottom of the cuboid. It should be an array with 3 elements.
+            5. property "height" means the height of the cuboid. It should be an number.
+ */
+function cuboid_generator(shape_data){
+    var pointArray;
+    var points;
+    var normals;
+    var indice = [1, 3, 8, 1, 8, 5, 1, 6, 7, 1, 7, 3, 6, 2, 4, 6, 4, 7, 2, 5, 8, 2, 8, 4, 3, 7, 4, 3, 4, 8, 1, 5, 2, 1, 2, 6];
+    
+    for(var k = 0; k < 36; k++)
+        indice[k]--;
+    
+    var p1 = vec3(shape_data["bottom_leftup"][0], shape_data["bottom_leftup"][1], shape_data["bottom_leftup"][2]);
+    pointArray.push(p1);
+    var p2 = vec3(shape_data["bottom_rightdown"][0], shape_data["bottom_rightdown"][1], shape_data["bottom_rightdown"][3]);
+    pointArray.push(p2);
+    var p3 = vec3(shape_data["bottom_leftup"][0], shape_data["bottom_leftup"][1] + shape_data["height"], shape_data["bottom_leftup"]);
+    pointArray.push(p3);
+    var p4 = vec3(shape_data["bottom_rightdown"][0], shape_data["bottom_rightdown"][1] + shape_data["height"], shape_data["bottom_rightdown"]);
+    pointArray.push(p4);
+    var p5 = vec3(shape_data["bottom_leftdown"][0], shape_data["bottom_leftdown"][1], shape_data["bottom_leftdown"][2]);
+    pointArray.push(p5);
+    var p6 = vec3(shape_data["bottom_rightup"][0], shape_data["bottom_rightup"][1], shape_data["bottom_rightup"][2]);
+    pointArray.push(p6);
+    var p7 = vec3(shape_data["bottom_rightup"][0], shape_data["bottom_rightup"][1] + shape_data["height"], shape_data["bottom_rightup"][2]);
+    pointArray.push(p7);
+    var p8 = vec3(shape_data["bottom_leftdown"][0], shape_data["bottom_leftdown"][1] + shape_data["height"], shape_data["bottom_leftdown"][2]);
+    pointArray.push(p8);
+    
+    var normal_tmp;
+    for(var i = 0; i < 36; i += 6){
+        normal_tmp = get_rectangle_normals([pointArray[indice[i]], pointArray[indice[i + 1]], pointArray[indice[i + 2]], pointArray[indice[i + 5]]]);
+        for(int j = 0; j < 6; j++){
+            normals.push(normal_tmp[j]);
+            points.push(pointArray[indice[i + j]]);
+        }
+    }
+
+    return {
+        vertices: points,
+        normals: normals
+    };
+}
+
+function get_rectangle_normals(vertices){
+    var t1 = subtract(vertices[2] - vertices[0]);
+    var t2 = subtract(vertices[1] - vertices[3]);
+    
+    var normal = vec3(cross(t1, t2));
+    
+    return [normal, normal, normal, normal, normal, normal];
+}
+=======
 
 function generateColors(count, color) {
   var colors = [];
@@ -482,3 +555,4 @@ function generateColors(count, color) {
 //   return [normal, normal, normal, normal, normal, normal];
 // }
 
+>>>>>>> cd63499a9ddb5bae5a9bcc9da36f1c7381d66640
