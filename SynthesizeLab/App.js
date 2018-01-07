@@ -1,6 +1,10 @@
 var TIMER_ID = -1;
 var RENDER_RATE = 100;
 var key_move = 0.1;
+var now_point_id = -1;
+var stopAnimate = true;
+var changeAngle = 0;
+var isFirst = true;
 
 function App(ch, lh, dh) {
   this.load = () => {
@@ -125,10 +129,66 @@ function App(ch, lh, dh) {
     };
     document.getElementById("in").onclick = () => {
       camera.dollyin();
+      isFirst = false;
     };
     document.getElementById("out").onclick = () => {
       camera.dollyout();
+      isFirst = false;
     };
+    document.getElementById("walk").onclick = () => {
+        if(!isFirst){
+            camera.azimuth = 0;
+            camera.elevation = 0;
+            camera.setLocation(vec3(0, 2, 10));
+            now_point_id = -1;
+            isFirst = true;
+        }
+        stopAnimate = false;
+        animate();
+        
+    };
+    document.getElementById("stop_move").onclick = () => {
+        stopAnimate = true;
+    }
+    document.getElementById("down_look").onclick = () => {
+        camera.setLocation(vec3(0, 15, 0));
+        camera.azimuth = 0;
+        camera.elevation = 0;
+        camera.changeElevation(90);
+        isFirst = false;
+        stopAnimate = true;
+    }
+    document.getElementById("toward_look").onclick = () => {
+        camera.azimuth = 0;
+        camera.elevation = 0;
+        camera.setLocation(vec3(0, 2, 10));
+        isFirst = false;
+        stopAnimate = true;
+    }
+    document.getElementById("left_look").onclick = () => {
+        camera.setLocation(vec3(-10, 2, -3));
+        camera.azimuth = 0;
+        camera.elevation = 0;
+        camera.changeAzimuth(90);
+        isFirst = false;
+        stopAnimate = true;
+    }
+    document.getElementById("right_look").onclick = () => {
+        camera.setLocation(vec3(10, 2, -3));
+        camera.azimuth = 0;
+        camera.elevation = 0;
+        camera.changeAzimuth(-90);
+        isFirst = false;
+        stopAnimate = true;
+    }
+    document.getElementById("back_look").onclick = () => {
+        camera.elevation = 0;
+        camera.azimuth = 0;
+        camera.changeAzimuth(-180);
+        camera.setLocation(vec3(0, 2, -15));
+        isFirst = false;
+        stopAnimate = true;
+    }
     document.onkeydown = event => {
       var e = event || window.event || arguments.callee.caller.arguments[0];
       var dx =
@@ -190,6 +250,7 @@ function App(ch, lh, dh) {
     Xiaohei.updateTransformMatrix();
     Light.updateTransformMatrix();
   };
+  
 
   this.initTransform = () => {
     modelViewMatrix = camera.getViewTransform();
@@ -324,4 +385,88 @@ function App(ch, lh, dh) {
     this.initTransform();
     this.draw();
   };
+
+  function animate(){
+      var step = 0.1;
+      if(now_point_id == -1){
+          if(camera.position[2] > 5)
+              camera.setLocation(vec3(
+                                  camera.position[0],
+                                  camera.position[1],
+                                  camera.position[2] - step
+                             ));
+          else
+              now_point_id = 0;
+      }
+      else{
+          switch(now_point_id % 4){
+              case 0:{
+                  if(camera.position[0] < 8){
+                      camera.setLocation(vec3(
+                                              camera.position[0] + step,
+                                              camera.position[1],
+                                              camera.position[2]
+                                              ));
+                  }
+                  else{
+                      changeCameraAngle();
+                  }
+                  break;
+              }
+              case 1:{
+                  if(camera.position[2] > -10){
+                      camera.setLocation(vec3(
+                                              camera.position[0],
+                                              camera.position[1],
+                                              camera.position[2] - step
+                                              ));
+                  }
+                  else{
+                      changeCameraAngle();
+                  }
+                  break;
+              }
+              case 2:{
+                  if(camera.position[0] > -8){
+                      camera.setLocation(vec3(
+                                              camera.position[0] - step,
+                                              camera.position[1],
+                                              camera.position[2]
+                                              ));
+                  }
+                  else{
+                      changeCameraAngle();
+                  }
+                  break;
+              }
+              case 3:{
+                  if(camera.position[2] < 5){
+                      camera.setLocation(vec3(
+                                              camera.position[0],
+                                              camera.position[1],
+                                              camera.position[2] + step
+                                              ));
+                  }
+                  else{
+                      changeCameraAngle();
+                  }
+                  break;
+              }
+          }
+      }
+      if(!stopAnimate)
+          requestAnimationFrame(animate);
+  }
+    
+  function changeCameraAngle(){
+      var angle_step = 3;
+      if(changeAngle < 90){
+          changeAngle += angle_step;
+          camera.changeAzimuth(-angle_step);
+      }
+      else{
+          now_point_id++;
+          changeAngle = 0;
+      }
+  }
 }
