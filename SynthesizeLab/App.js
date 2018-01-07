@@ -24,24 +24,24 @@ function App(ch, lh, dh) {
     program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
 
+    //创建相机并绑定相机鼠标交互。
+    camera = new Camera();
+    camera.setLocation(0, 2, 10);
+    camera.onChange = this.draw;
+    interactor = new CameraInteractor(camera, canvas);
+
+    //初始化各个着色器变量。
     aVertexPosition = gl.getAttribLocation(program, "aVertexPosition");
     aVertexColor = gl.getAttribLocation(program, "aVertexColor");
     aVertexTextureCoords = gl.getAttribLocation(
       program,
       "aVertexTextureCoords"
     );
-
-    camera = new Camera();
-    camera.setLocation(0, 2, 10);
-    camera.onChange = this.draw;
-    interactor = new CameraInteractor(camera, canvas);
-
     uMVMatrix = gl.getUniformLocation(program, "uMVMatrix");
     uTMatrix = gl.getUniformLocation(program, "uTMatrix");
     uPMatrix = gl.getUniformLocation(program, "uPMatrix");
     uColor = gl.getUniformLocation(program, "uColor");
     uLightPosition = gl.getUniformLocation(program, "uLightPosition");
-
     aVertexNormal = gl.getAttribLocation(program, "aVertexNormal");
     uAmbientProduct = gl.getUniformLocation(program, "uAmbientProduct");
     uDiffuseProduct = gl.getUniformLocation(program, "uDiffuseProduct");
@@ -50,12 +50,16 @@ function App(ch, lh, dh) {
     uTexture_0_xiaohei = gl.getUniformLocation(program, "uTexture_0_xiaohei");
     uUseTexture = gl.getUniformLocation(program, "uUseTexture");
     aTextureCoord = gl.getAttribLocation(program, "aTextureCoord");
+
+    //向Scene中添加一个墙对象。
     Wall.build();
     Scene.addObject(Wall);
 
+    //向Scene中添加一个线框地板对象。
     Floor.build(40, 20);
     Scene.addObject(Floor);
 
+    //创建两只嘿咻对象，并添加到Scene对象中。
     heixiu = new Heixiu();
     heixiu2 = new Heixiu();
     heixiu.setLocation(3, 1, -3);
@@ -67,12 +71,15 @@ function App(ch, lh, dh) {
     Scene.addObject(heixiu);
     Scene.addObject(heixiu2);
 
+    //创建一只小黑对象，并添加到Scene对象中。
     Xiaohei.build();
     Scene.addObject(Xiaohei);
+
+    //构造光源对象，并添加到Scene对象中。
     Light.build();
     Scene.addObject(Light);
 
-
+    //设置按钮点击事件。
     document.getElementById("RotateLeft").onclick = () => {
       Xiaohei.rotateLeft();
     };
@@ -145,7 +152,6 @@ function App(ch, lh, dh) {
         }
         stopAnimate = false;
         animate();
-        
     };
     document.getElementById("stop_move").onclick = () => {
         stopAnimate = true;
@@ -262,6 +268,10 @@ function App(ch, lh, dh) {
     );
   };
 
+  /**
+   * 
+   * @param {*} object 传递object的材质属性到uniform变量中，用于计算明暗。
+   */
   this.updateLight = object => {
     if (object.materialAmbient) {
       var ambientProduct = mult(Light.lightAmbient, object.materialAmbient);
@@ -282,6 +292,10 @@ function App(ch, lh, dh) {
     }
   };
 
+  /**
+   * 根据camera的matrix更新整个场景的模型视图矩阵，并传递到uniform变量中。
+   * 同时传递projection矩阵。
+   */
   this.updateMatrixUniforms = () => {
     perspectiveMatrix = perspective(
       50,
@@ -301,6 +315,7 @@ function App(ch, lh, dh) {
     gl.uniformMatrix3fv(uNMatrix, false, flatten(normalMatrix));
   };
 
+  //
   this.draw = () => {
     gl.viewport(0, 0, viewportWidth, viewportHeight);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -308,32 +323,29 @@ function App(ch, lh, dh) {
 
     this.updateMatrixUniforms();
 
+    //遍历Scene对象中的每个需要绘制的对象。
     for (var i = 0; i < Scene.objects.length; i++) {
       var object = Scene.objects[i];
 
       //传递该对象的光照属性。
       this.updateLight(object);
 
+      //传递一个布尔值到片元着色器中，这样便于在片元着色器中采取不同的行动。
+      //如果useTexture为true，最后的颜色为明暗颜色*光照颜色。
+      //如果为false，就直接采用光照颜色。
       if (!object.useTexture) {
         object.useTexture = false;
       }
-
       gl.uniform1i(uUseTexture, object.useTexture);
 
-      //如果该对象定义了变换矩阵，则进行变换。
+      //如果该对象定义了变换矩阵，则传递他的变换矩阵到unform变量中。
       if (object.transformMatrix) {
         gl.uniformMatrix4fv(uTMatrix, false, flatten(object.transformMatrix));
       } else {
         gl.uniformMatrix4fv(uTMatrix, false, flatten(mat4()));
       }
 
-      // if (object.perVertexColor) {
-      //   gl.bindBuffer(gl.ARRAY_BUFFER, object.cbo);
-      //   gl.vertexAttribPointer(aVertexColor, 4, gl.FLOAT, false, 0, 0);
-      //   gl.enableVertexAttribArray(aVertexColor);
-      // } else {
-      //   gl.uniform4fv(uColor, object.color);
-      // }
+      //绑定纹理坐标的buffer到attribute变量。
       if (object.useTexture) {
         gl.bindBuffer(gl.ARRAY_BUFFER, object.tbo);
         gl.vertexAttribPointer(aTextureCoord, 2, gl.FLOAT, false, 0, 0);
@@ -351,6 +363,7 @@ function App(ch, lh, dh) {
         gl.enableVertexAttribArray(aVertexNormal);
       }
 
+      //绑定顶点坐标buffer到attribute变量。
       gl.bindBuffer(gl.ARRAY_BUFFER, object.vbo);
       gl.vertexAttribPointer(aVertexPosition, 3, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(aVertexPosition);
