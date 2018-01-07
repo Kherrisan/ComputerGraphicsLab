@@ -26,9 +26,8 @@
         {
             gl_Position = uPMatrix * uMVMatrix * uTMatrix * vec4(aVertexPosition, 1.0);
             vec3 pos =  (uMVMatrix * uTMatrix * vec4(aVertexPosition, 1.0)).xyz;
-            // check for directional light
             if(uLightPosition.w ==0.0) L=normalize(uLightPosition.xyz);
-            else L = normalize( uLightPosition.xyz - pos );
+            else L = normalize( uLightPosition.xyz - pos  );
 
             E = -normalize(pos);
             N = aVertexNormal.xyz;
@@ -62,7 +61,10 @@
             float Ks = pow( max(dot(N, H), 0.0), uShininess );
             vec4  specular = Ks * uSpecularProduct;
             
-            if( dot(L, N) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
+            if( dot(L, N) < 0.0 ) 
+            {
+                specular = vec4(0.0, 0.0, 0.0, 1.0);
+            }
             fColor = ambient+diffuse+specular;
             fColor.a = 1.0;
             

@@ -1,7 +1,7 @@
 function Heixiu() {
   //材质属性
-  this.materialAmbient = vec4(0.1, 0.1, 0.1, 1.0);
-  this.materialDiffuse = vec4(0.2, 0.2, 0.2, 1.0);
+  this.materialAmbient = vec4(0.3, 0.3, 0.3, 1.0);
+  this.materialDiffuse = vec4(0.0, 0.0, 0.0, 1.0);
   this.materialSpecular = vec4(0.01, 0.01, 0.01, 1.0);
   this.shininess = 1.0;
   this.useTexture = true;

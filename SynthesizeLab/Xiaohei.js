@@ -19,10 +19,10 @@ function texture_coordinate(x, y, z, height, width) {
 
 var Xiaohei = {
   //材质属性
-  materialAmbient: vec4(0.1, 0.1, 0.1, 1.0),
+  materialAmbient: vec4(0.2, 0.2, 0.2, 1.0),
   materialDiffuse: vec4(0.2, 0.2, 0.2, 1.0),
-  materialSpecular: vec4(0.01, 0.01, 0.01, 1.0),
-  shininess: 1.0,
+  materialSpecular: vec4(0.3, 0.3, 0.3, 1.0),
+  shininess: 6.0,
   texture: null,
   // CurModelViewMatrix: mat4(), //当前变换矩阵
   FORWARD_STEP: 0.2, //平移步长

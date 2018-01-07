@@ -11,9 +11,9 @@ function texture_coordinate(x, y, z, height, width) {
 }
 var Light = {
   // lightPosition: vec4(1.0, 1.0, 1.0, 1.0),
-  lightAmbient: vec4(1.0, 1.0, 1.0, 1.0),
-  lightDiffuse: vec4(1.0, 1.0, 1.0, 1.0),
-  lightSpecular: vec4(0.5, 0.5, 0.5, 1.0),
+  lightAmbient: vec4(0.2, 0.2, 0.2, 1.0),
+  lightDiffuse: vec4(0.3, 0.3, 0.3, 1.0),
+  lightSpecular: vec4(0.3, 0.3, 0.3, 1.0),
   //材质属性
   // materialAmbient: vec4(0.1, 0.1, 0.1, 1.0),
   // materialDiffuse: vec4(0.2, 0.2, 0.2, 1.0),

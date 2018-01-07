@@ -433,9 +433,9 @@ function generateColors(count, color) {
             5. property "height" means the height of the cuboid. It should be an number.
  */
 function cuboid_generator(shape_data) {
-  var pointArray=[];
-  var points=[];
-  var normals=[];
+  var pointArray = [];
+  var points = [];
+  var normals = [];
   var indice = [
     1,
     3,
@@ -551,6 +551,7 @@ function get_rectangle_normals(vertices) {
   var t2 = subtract(vertices[1], vertices[3]);
 
   var normal = vec3(cross(t1, t2));
+  normal = subtract(vec3(), normal);
 
   return [normal, normal, normal, normal, normal, normal];
 }
