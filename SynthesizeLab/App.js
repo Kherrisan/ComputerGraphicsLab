@@ -35,13 +35,10 @@ function App(ch, lh, dh) {
     uMVMatrix = gl.getUniformLocation(program, "uMVMatrix");
     uTMatrix = gl.getUniformLocation(program, "uTMatrix");
     uPMatrix = gl.getUniformLocation(program, "uPMatrix");
-    uPerVertexColor = gl.getUniformLocation(program, "uPerVertexColor");
     uColor = gl.getUniformLocation(program, "uColor");
-    uSampler = gl.getUniformLocation(program, "uSampler");
     uLightPosition = gl.getUniformLocation(program, "uLightPosition");
-    uNMatrix = gl.getUniformLocation(program, "uNMatrix");
-    uWireframe = gl.getUniformLocation(program, "uWireframe");
-    aVertexNormal = gl.getUniformLocation(program, "aVertexNormal");
+
+    aVertexNormal = gl.getAttribLocation(program, "aVertexNormal");
     uAmbientProduct = gl.getUniformLocation(program, "uAmbientProduct");
     uDiffuseProduct = gl.getUniformLocation(program, "uDiffuseProduct");
     uSpecularProduct = gl.getUniformLocation(program, "uSpecularProduct");
@@ -49,6 +46,8 @@ function App(ch, lh, dh) {
     uTexture_0_xiaohei = gl.getUniformLocation(program, "uTexture_0_xiaohei");
     uUseTexture = gl.getUniformLocation(program, "uUseTexture");
     aTextureCoord = gl.getAttribLocation(program, "aTextureCoord");
+    Wall.build();
+    Scene.addObject(Wall);
 
     Floor.build(40, 20);
     Scene.addObject(Floor);
@@ -68,6 +67,7 @@ function App(ch, lh, dh) {
     Scene.addObject(Xiaohei);
     Light.build();
     Scene.addObject(Light);
+
 
     document.getElementById("RotateLeft").onclick = () => {
       Xiaohei.rotateLeft();
@@ -253,18 +253,10 @@ function App(ch, lh, dh) {
       //传递该对象的光照属性。
       this.updateLight(object);
 
-      if (!object.perVertexColor) {
-        object.perVertexColor = false;
-      }
-      if (!object.wireframe) {
-        object.wireframe = false;
-      }
       if (!object.useTexture) {
         object.useTexture = false;
       }
 
-      gl.uniform1i(uWireframe, object.wireframe);
-      gl.uniform1i(uPerVertexColor, object.perVertexColor);
       gl.uniform1i(uUseTexture, object.useTexture);
 
       //如果该对象定义了变换矩阵，则进行变换。
@@ -321,7 +313,7 @@ function App(ch, lh, dh) {
         gl.drawArrays(gl.TRIANGLES, 0, object.vertexNum);
       }
 
-      gl.disableVertexAttribArray(aVertexPosition);
+      gl.disableVertexAttribArray(aVertexNormal);
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
     }
