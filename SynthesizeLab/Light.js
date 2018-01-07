@@ -1,14 +1,3 @@
-function texture_empty(theta, fai, size) {
-  return vec2(0, 0);
-}
-function texture_coordinate(x, y, z, height, width) {
-  if (z < 0) {
-    return vec2(0, 0);
-  }
-  x = (x + width / 2.0) / width;
-  y = (-y + height / 2.0) / height;
-  return vec2(x, y);
-}
 var Light = {
   // lightPosition: vec4(1.0, 1.0, 1.0, 1.0),
   lightAmbient: vec4(1.0, 1.0, 1.0, 1.0),
@@ -45,9 +34,6 @@ var Light = {
   },
   build: () => {
     var vertices = [];
-    var colors = [];
-    //---//
-    var textures = [];
     var normals = [];
     //init shape data 
     var shape_data = {
@@ -57,24 +43,17 @@ var Light = {
         Light.size * 0.2,
         Light.size * 0.2
       ), //7:2:3
-      height: 0,
       angle_range_vertical: vec2(0, 180),
       angle_range_horizontal: vec2(0, 360),
-      position_matrix: vec4(),
-      color: vec4(247, 232, 45, 1)
     };
     //generate light'body as a sphere, vertices and colors
-    var light_vertices = ellipsoid_generator(shape_data, texture_empty);
+    var light_vertices = ellipsoid_generator(shape_data, null);
     Light.constructMatrix(
       mult(rotateZ(0), rotateX(90)),
-      light_vertices.vertexPoint
+      light_vertices.vertices
     );
-    vertices = vertices.concat(light_vertices.vertexPoint);
-    colors = colors.concat(
-      generateColors(light_vertices.vertexPoint.length, shape_data['color'])
-    );
+    vertices = vertices.concat(light_vertices.vertices);
     normals = normals.concat(light_vertices.normals);
-    textures = textures.concat(light_vertices.textures);
 
     //bind buffer, vbo and cbo
     Light.vertexNum = vertices.length;
@@ -83,20 +62,12 @@ var Light = {
     gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-    Light.cbo = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, Light.cbo);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
-    gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
     Light.nbo = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, Light.nbo);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(normals), gl.STATIC_DRAW);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-    Light.tbo = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, Light.tbo);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(textures), gl.STATIC_DRAW);
-    gl.bindBuffer(gl.ARRAY_BUFFER, null);
   },
   constructMatrix: function (matrix, vertices) {
     //This function transform each part of the object by multiply vertices with translate matrix or rotate matrix,
