@@ -101,3 +101,4 @@
 
 ### 实验最终效果
 
+![实验成果图](https://raw.githubusercontent.com/Dokyme/ComputerGraphicsLab/SynthesizeLab/final.png)
