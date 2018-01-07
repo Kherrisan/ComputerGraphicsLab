@@ -22,7 +22,7 @@ function Heixiu() {
   this.shininess = 1.0;//对象的高光度
   this.useTexture = true;//是否使用纹理
   this.texture = null;//纹理属性
-  this.FORWARD_STEP = 0.5;//前进步长
+  this.FORWARD_STEP = 0.5;//平移步长
   this.ROTATE_STEP = 5;//旋转步长
   this.RESIZE_STEP = 0.1;//缩放步长
   this.rotateAngle = 0; //旋转初始角度
@@ -91,13 +91,11 @@ Heixiu.prototype.build = function () {
 
   //通过调用Geometry.js中的generator函数计算好heixiu右耳朵的顶点，纹理和法向量的坐标并存入对应数组
   var rightear_vertices = taper_generator(shape_data, texture_empty);
-  //对左耳朵所有顶点作相对于黑修origin原点的变换。是一个平移和旋转变换，把耳朵移到头部右上方。
+  //对右耳朵所有顶点作相对于黑修origin原点的变换。是一个平移和旋转变换，把耳朵移到头部右上方。
   this.constructMatrix(
     mult(translate(-this.size * 2.5, this.size * 2, 0), rotateZ(-20)),
     rightear_vertices.vertices
   );
-
-  //修改shape_data相关属性的数据，用于生成heixiu的左耳朵的相关参数
   vertices = vertices.concat(rightear_vertices.vertices);
   textures = textures.concat(rightear_vertices.textures);
   normals = normals.concat(rightear_vertices.normals);
@@ -113,9 +111,11 @@ Heixiu.prototype.build = function () {
   textures = textures.concat(leftear_vertices.textures);
   normals = normals.concat(leftear_vertices.normals);
 
+
+  //保存顶点个数，用于drawArray
+  this.vertexNum = vertices.length;
   //分别针对vbo，nbo，tbo创建相对应的缓存区
   //并且将对应的顶点，法向量和纹理坐标数组绑定到对应的缓存区上
-  this.vertexNum = vertices.length;
   this.vbo = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
   gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
