@@ -154,9 +154,11 @@ function App(ch, lh, dh) {
       stopAnimate = false;
       animate();
     };
+    //开始场景漫游（动画效果）
     document.getElementById("stop_move").onclick = () => {
-      stopAnimate = true;
-    };
+        stopAnimate = true;
+    }
+    //下面五个分别对应俯视图、前视图、左视图、右视图、后视图
     document.getElementById("down_look").onclick = () => {
       camera.setLocation(vec3(0, 15, 0));
       camera.azimuth = 0;
@@ -395,80 +397,83 @@ function App(ch, lh, dh) {
     this.draw();
   };
 
-  function animate() {
-    var step = 0.1;
-    if (now_point_id == -1) {
-      if (camera.position[2] > 5)
-        camera.setLocation(
-          vec3(
-            camera.position[0],
-            camera.position[1],
-            camera.position[2] - step
-          )
-        );
-      else now_point_id = 0;
-    } else {
-      switch (now_point_id % 4) {
-        case 0: {
-          if (camera.position[0] < 8) {
-            camera.setLocation(
-              vec3(
-                camera.position[0] + step,
-                camera.position[1],
-                camera.position[2]
-              )
-            );
-          } else {
-            changeCameraAngle();
-          }
-          break;
+    //场景漫游（动画效果）
+    function animate(){
+        //设置每一次往前走0.1
+        var step = 0.05;
+        //从初始位置往前走5个单位
+        if(now_point_id == -1){
+            if(camera.position[2] > 5)
+                camera.setLocation(vec3(
+                                        camera.position[0],
+                                        camera.position[1],
+                                        camera.position[2] - step
+                                        ));
+            else
+                now_point_id = 0;
         }
-        case 1: {
-          if (camera.position[2] > -10) {
-            camera.setLocation(
-              vec3(
-                camera.position[0],
-                camera.position[1],
-                camera.position[2] - step
-              )
-            );
-          } else {
-            changeCameraAngle();
-          }
-          break;
+        //开始绕圈
+        else{
+            switch(now_point_id % 4){
+                case 0:{
+                    if(camera.position[0] < 8){
+                        camera.setLocation(vec3(
+                                                camera.position[0] + step,
+                                                camera.position[1],
+                                                camera.position[2]
+                                                ));
+                    }
+                    else{
+                        changeCameraAngle();
+                    }
+                    break;
+                }
+                case 1:{
+                    if(camera.position[2] > -10){
+                        camera.setLocation(vec3(
+                                                camera.position[0],
+                                                camera.position[1],
+                                                camera.position[2] - step
+                                                ));
+                    }
+                    else{
+                        changeCameraAngle();
+                    }
+                    break;
+                }
+                case 2:{
+                    if(camera.position[0] > -8){
+                        camera.setLocation(vec3(
+                                                camera.position[0] - step,
+                                                camera.position[1],
+                                                camera.position[2]
+                                                ));
+                    }
+                    else{
+                        changeCameraAngle();
+                    }
+                    break;
+                }
+                case 3:{
+                    if(camera.position[2] < 5){
+                        camera.setLocation(vec3(
+                                                camera.position[0],
+                                                camera.position[1],
+                                                camera.position[2] + step
+                                                ));
+                    }
+                    else{
+                        changeCameraAngle();
+                    }
+                    break;
+                }
+            }
         }
-        case 2: {
-          if (camera.position[0] > -8) {
-            camera.setLocation(
-              vec3(
-                camera.position[0] - step,
-                camera.position[1],
-                camera.position[2]
-              )
-            );
-          } else {
-            changeCameraAngle();
-          }
-          break;
-        }
-        case 3: {
-          if (camera.position[2] < 5) {
-            camera.setLocation(
-              vec3(
-                camera.position[0],
-                camera.position[1],
-                camera.position[2] + step
-              )
-            );
-          } else {
-            changeCameraAngle();
-          }
-          break;
-        }
-      }
+        //保证动画可以停止
+        if(!stopAnimate)
+            requestAnimationFrame(animate);
     }
-    if (!stopAnimate) requestAnimationFrame(animate);
-  }
+
 
   function changeCameraAngle() {
     var angle_step = 3;
