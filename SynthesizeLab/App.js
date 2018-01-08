@@ -41,6 +41,7 @@ function App(ch, lh, dh) {
     uTMatrix = gl.getUniformLocation(program, "uTMatrix");
     uPMatrix = gl.getUniformLocation(program, "uPMatrix");
     uColor = gl.getUniformLocation(program, "uColor");
+    uNMMatrix = gl.getUniformLocation(program, "uNMMatrix");
     uLightPosition = gl.getUniformLocation(program, "uLightPosition");
     aVertexNormal = gl.getAttribLocation(program, "aVertexNormal");
     uAmbientProduct = gl.getUniformLocation(program, "uAmbientProduct");
@@ -143,58 +144,58 @@ function App(ch, lh, dh) {
       isFirst = false;
     };
     document.getElementById("walk").onclick = () => {
-        if(!isFirst){
-            camera.azimuth = 0;
-            camera.elevation = 0;
-            camera.setLocation(vec3(0, 2, 10));
-            now_point_id = -1;
-            isFirst = true;
-        }
-        stopAnimate = false;
-        animate();
-    };
-    document.getElementById("stop_move").onclick = () => {
-        stopAnimate = true;
-    }
-    document.getElementById("down_look").onclick = () => {
-        camera.setLocation(vec3(0, 15, 0));
-        camera.azimuth = 0;
-        camera.elevation = 0;
-        camera.changeElevation(90);
-        isFirst = false;
-        stopAnimate = true;
-    }
-    document.getElementById("toward_look").onclick = () => {
+      if (!isFirst) {
         camera.azimuth = 0;
         camera.elevation = 0;
         camera.setLocation(vec3(0, 2, 10));
-        isFirst = false;
-        stopAnimate = true;
-    }
+        now_point_id = -1;
+        isFirst = true;
+      }
+      stopAnimate = false;
+      animate();
+    };
+    document.getElementById("stop_move").onclick = () => {
+      stopAnimate = true;
+    };
+    document.getElementById("down_look").onclick = () => {
+      camera.setLocation(vec3(0, 15, 0));
+      camera.azimuth = 0;
+      camera.elevation = 0;
+      camera.changeElevation(90);
+      isFirst = false;
+      stopAnimate = true;
+    };
+    document.getElementById("toward_look").onclick = () => {
+      camera.azimuth = 0;
+      camera.elevation = 0;
+      camera.setLocation(vec3(0, 2, 10));
+      isFirst = false;
+      stopAnimate = true;
+    };
     document.getElementById("left_look").onclick = () => {
-        camera.setLocation(vec3(-10, 2, -3));
-        camera.azimuth = 0;
-        camera.elevation = 0;
-        camera.changeAzimuth(90);
-        isFirst = false;
-        stopAnimate = true;
-    }
+      camera.setLocation(vec3(-10, 2, -3));
+      camera.azimuth = 0;
+      camera.elevation = 0;
+      camera.changeAzimuth(90);
+      isFirst = false;
+      stopAnimate = true;
+    };
     document.getElementById("right_look").onclick = () => {
-        camera.setLocation(vec3(10, 2, -3));
-        camera.azimuth = 0;
-        camera.elevation = 0;
-        camera.changeAzimuth(-90);
-        isFirst = false;
-        stopAnimate = true;
-    }
+      camera.setLocation(vec3(10, 2, -3));
+      camera.azimuth = 0;
+      camera.elevation = 0;
+      camera.changeAzimuth(-90);
+      isFirst = false;
+      stopAnimate = true;
+    };
     document.getElementById("back_look").onclick = () => {
-        camera.elevation = 0;
-        camera.azimuth = 0;
-        camera.changeAzimuth(-180);
-        camera.setLocation(vec3(0, 2, -15));
-        isFirst = false;
-        stopAnimate = true;
-    }
+      camera.elevation = 0;
+      camera.azimuth = 0;
+      camera.changeAzimuth(-180);
+      camera.setLocation(vec3(0, 2, -15));
+      isFirst = false;
+      stopAnimate = true;
+    };
     document.onkeydown = event => {
       var e = event || window.event || arguments.callee.caller.arguments[0];
       var dx =
@@ -256,7 +257,6 @@ function App(ch, lh, dh) {
     Xiaohei.updateTransformMatrix();
     Light.updateTransformMatrix();
   };
-  
 
   this.initTransform = () => {
     modelViewMatrix = camera.getViewTransform();
@@ -269,7 +269,7 @@ function App(ch, lh, dh) {
   };
 
   /**
-   * 
+   *
    * @param {*} object 传递object的材质属性到uniform变量中，用于计算明暗。
    */
   this.updateLight = object => {
@@ -294,25 +294,21 @@ function App(ch, lh, dh) {
 
   /**
    * 根据camera的matrix更新整个场景的模型视图矩阵，并传递到uniform变量中。
-   * 同时传递projection矩阵。
+   * 同时传递projection矩阵和normalMatrix。
    */
   this.updateMatrixUniforms = () => {
+    var modelViewMatrix = camera.getViewTransform();
     perspectiveMatrix = perspective(
       50,
       viewportWidth / viewportHeight,
       1,
       1000.0
     );
-    gl.uniformMatrix4fv(uMVMatrix, false, flatten(camera.getViewTransform()));
+    gl.uniformMatrix4fv(uMVMatrix, false, flatten(modelViewMatrix));
     gl.uniformMatrix4fv(uPMatrix, false, flatten(perspectiveMatrix));
-
-    var modelViewMatrix = camera.getViewTransform();
-    normalMatrix = [
-      vec3(modelViewMatrix[0][0], modelViewMatrix[0][1], modelViewMatrix[0][2]),
-      vec3(modelViewMatrix[1][0], modelViewMatrix[1][1], modelViewMatrix[1][2]),
-      vec3(modelViewMatrix[2][0], modelViewMatrix[2][1], modelViewMatrix[2][2])
-    ];
-    gl.uniformMatrix3fv(uNMatrix, false, flatten(normalMatrix));
+    
+    var nMMatrix = normalMatrix(modelViewMatrix, true);
+    gl.uniformMatrix3fv(uNMMatrix, false, flatten(nMMatrix));
   };
 
   //
@@ -399,87 +395,89 @@ function App(ch, lh, dh) {
     this.draw();
   };
 
-  function animate(){
-      var step = 0.1;
-      if(now_point_id == -1){
-          if(camera.position[2] > 5)
-              camera.setLocation(vec3(
-                                  camera.position[0],
-                                  camera.position[1],
-                                  camera.position[2] - step
-                             ));
-          else
-              now_point_id = 0;
-      }
-      else{
-          switch(now_point_id % 4){
-              case 0:{
-                  if(camera.position[0] < 8){
-                      camera.setLocation(vec3(
-                                              camera.position[0] + step,
-                                              camera.position[1],
-                                              camera.position[2]
-                                              ));
-                  }
-                  else{
-                      changeCameraAngle();
-                  }
-                  break;
-              }
-              case 1:{
-                  if(camera.position[2] > -10){
-                      camera.setLocation(vec3(
-                                              camera.position[0],
-                                              camera.position[1],
-                                              camera.position[2] - step
-                                              ));
-                  }
-                  else{
-                      changeCameraAngle();
-                  }
-                  break;
-              }
-              case 2:{
-                  if(camera.position[0] > -8){
-                      camera.setLocation(vec3(
-                                              camera.position[0] - step,
-                                              camera.position[1],
-                                              camera.position[2]
-                                              ));
-                  }
-                  else{
-                      changeCameraAngle();
-                  }
-                  break;
-              }
-              case 3:{
-                  if(camera.position[2] < 5){
-                      camera.setLocation(vec3(
-                                              camera.position[0],
-                                              camera.position[1],
-                                              camera.position[2] + step
-                                              ));
-                  }
-                  else{
-                      changeCameraAngle();
-                  }
-                  break;
-              }
+  function animate() {
+    var step = 0.1;
+    if (now_point_id == -1) {
+      if (camera.position[2] > 5)
+        camera.setLocation(
+          vec3(
+            camera.position[0],
+            camera.position[1],
+            camera.position[2] - step
+          )
+        );
+      else now_point_id = 0;
+    } else {
+      switch (now_point_id % 4) {
+        case 0: {
+          if (camera.position[0] < 8) {
+            camera.setLocation(
+              vec3(
+                camera.position[0] + step,
+                camera.position[1],
+                camera.position[2]
+              )
+            );
+          } else {
+            changeCameraAngle();
           }
+          break;
+        }
+        case 1: {
+          if (camera.position[2] > -10) {
+            camera.setLocation(
+              vec3(
+                camera.position[0],
+                camera.position[1],
+                camera.position[2] - step
+              )
+            );
+          } else {
+            changeCameraAngle();
+          }
+          break;
+        }
+        case 2: {
+          if (camera.position[0] > -8) {
+            camera.setLocation(
+              vec3(
+                camera.position[0] - step,
+                camera.position[1],
+                camera.position[2]
+              )
+            );
+          } else {
+            changeCameraAngle();
+          }
+          break;
+        }
+        case 3: {
+          if (camera.position[2] < 5) {
+            camera.setLocation(
+              vec3(
+                camera.position[0],
+                camera.position[1],
+                camera.position[2] + step
+              )
+            );
+          } else {
+            changeCameraAngle();
+          }
+          break;
+        }
       }
-      if(!stopAnimate)
-          requestAnimationFrame(animate);
+    }
+    if (!stopAnimate) requestAnimationFrame(animate);
   }
-    
-  function changeCameraAngle(){
-      var angle_step = 3;
-      if(changeAngle < 90){
-          changeAngle += angle_step;
-          camera.changeAzimuth(-angle_step);
-      }
-      else{
-          now_point_id++;
-          changeAngle = 0;
-      }
+
+  function changeCameraAngle() {
+    var angle_step = 3;
+    if (changeAngle < 90) {
+      changeAngle += angle_step;
+      camera.changeAzimuth(-angle_step);
+    } else {
+      now_point_id++;
+      changeAngle = 0;
+    }
   }
 }

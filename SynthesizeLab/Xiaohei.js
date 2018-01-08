@@ -17,10 +17,10 @@ function texture_coordinate(x, y, z, height, width) {
 //这个文件定义了小黑对象，该对象持有小黑的一些位置和姿态属性，实现了小黑的动作变化，并拥有相关buffer。
 var Xiaohei = {
   //明暗材质属性
-  materialAmbient: vec4(0.2, 0.2, 0.2, 1.0),
+  materialAmbient: vec4(0.1, 0.1, 0.1, 1.0),
   materialDiffuse: vec4(0.2, 0.2, 0.2, 1.0),
-  materialSpecular: vec4(0.3, 0.3, 0.3, 1.0),
-  shininess: 6.0,//高光度
+  materialSpecular: vec4(0.01, 0.01, 0.01, 1.0),
+  shininess: 1.0,//高光度
   texture: null,
   FORWARD_STEP: 0.2, //平移步长
   ROTATE_STEP: 5,

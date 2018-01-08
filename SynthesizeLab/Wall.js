@@ -1,8 +1,8 @@
 var Wall = {
   //材质属性
-  materialAmbient: vec4(0.1, 0.1, 0.1, 1.0), //对象的材质环境光参数
-  materialDiffuse: vec4(0.2, 0.2, 0.2, 1.0), //对象的材质散射光参数
-  materialSpecular: vec4(0.01, 0.01, 0.01, 1.0), //对象的材质镜面光参数
+  materialAmbient: vec4(0.3, 0.3, 0.3, 1.0), //对象的材质环境光参数
+  materialDiffuse: vec4(0.3, 0.3, 0.3, 1.0), //对象的材质散射光参数
+  materialSpecular: vec4(0.5, 0.5, 0.5, 1.0), //对象的材质镜面光参数
   shininess: 1.0, //对象的高光度
   vbo: null, //存放顶点坐标的缓存区 vertices buffer object
   nbo: null, //存放法向量坐标的缓存区 normal buffer object

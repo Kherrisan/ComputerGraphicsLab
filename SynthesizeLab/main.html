@@ -15,6 +15,7 @@
         varying vec2 vTextureCoord;
 
         uniform mat4 uPMatrix;
+        uniform mat3 uNMMatrix;
         uniform mat4 uMVMatrix;
         uniform mat4 uTMatrix;
         uniform bool uPerVertexColor;
@@ -24,13 +25,13 @@
 
         void main()
         {
-            gl_Position = uPMatrix * uMVMatrix * uTMatrix * vec4(aVertexPosition, 1.0);
-            vec3 pos =  (uMVMatrix * uTMatrix * vec4(aVertexPosition, 1.0)).xyz;
-            if(uLightPosition.w ==0.0) L=normalize(uLightPosition.xyz);
-            else L = normalize( uLightPosition.xyz - pos  );
-
-            E = -normalize(pos);
-            N = aVertexNormal.xyz;
+            vec4 pos = uMVMatrix * uTMatrix * vec4(aVertexPosition, 1.0);
+            gl_Position = uPMatrix * pos;
+            if(uLightPosition.w == 0.0) L=normalize(uLightPosition.xyz);
+            else L = normalize(uLightPosition.xyz - pos.xyz);
+            E = -normalize(pos.xyz);
+            //N = aVertexNormal.xyz;
+            N = normalize(uNMMatrix * aVertexNormal.xyz);
             if(uUseTexture) {
                 vTextureCoord = aTextureCoord;
             }
@@ -56,7 +57,7 @@
             vec4 ambient = uAmbientProduct;
         
             float Kd = max( dot(L, N), 0.0 );
-            vec4  diffuse = Kd*uDiffuseProduct;
+            vec4  diffuse = Kd * uDiffuseProduct;
         
             float Ks = pow( max(dot(N, H), 0.0), uShininess );
             vec4  specular = Ks * uSpecularProduct;
@@ -69,7 +70,7 @@
             fColor.a = 1.0;
             
             if(uUseTexture){
-                gl_FragColor = fColor * texture2D(uTexture_0_xiaohei, vTextureCoord);
+                gl_FragColor = 0.8*fColor + 0.9*texture2D(uTexture_0_xiaohei, vTextureCoord);
             }else{
                 gl_FragColor = fColor;
             }
@@ -77,20 +78,20 @@
         }
     </script>
 
-    <script type="text/javascript" src="http://localhost:9090/common/webgl-utils.js"></script>
-    <script type="text/javascript" src="http://localhost:9090/common/initShaders.js"></script>
-    <script type="text/javascript" src="http://localhost:9090/common/MV.js"></script>
-    <script type="text/javascript" src="http://localhost:9090/Light.js"></script>
-    <script type="text/javascript" src="http://localhost:9090/Camera.js"></script>
-    <script type="text/javascript" src="http://localhost:9090/CameraInteractor.js"></script>
-    <script type="text/javascript" src="http://localhost:9090/Floor.js"></script>
-    <script type="text/javascript" src="http://localhost:9090/Geometry.js"></script> 
-    <script type="text/javascript" src="http://localhost:9090/Scene.js"></script>
-    <script type="text/javascript" src="http://localhost:9090/Wall.js"></script>
-    <script type="text/javascript" src="http://localhost:9090/Xiaohei.js"></script>
-    <script type="text/javascript" src="http://localhost:9090/Heixiu.js"></script>
-    <script type="text/javascript" src="http://localhost:9090/App.js"></script>
-    <script type="text/javascript" src="http://localhost:9090/Main.js"></script>
+    <script type="text/javascript" src="./common/webgl-utils.js"></script>
+    <script type="text/javascript" src="./common/initShaders.js"></script>
+    <script type="text/javascript" src="./common/MV.js"></script>
+    <script type="text/javascript" src="./Light.js"></script>
+    <script type="text/javascript" src="./Camera.js"></script>
+    <script type="text/javascript" src="./CameraInteractor.js"></script>
+    <script type="text/javascript" src="./Floor.js"></script>
+    <script type="text/javascript" src="./Geometry.js"></script> 
+    <script type="text/javascript" src="./Scene.js"></script>
+    <script type="text/javascript" src="./Wall.js"></script>
+    <script type="text/javascript" src="./Xiaohei.js"></script>
+    <script type="text/javascript" src="./Heixiu.js"></script>
+    <script type="text/javascript" src="./App.js"></script>
+    <script type="text/javascript" src="./Main.js"></script>
 
 </head>
 
@@ -142,8 +143,8 @@
             <button type="button" id="back_look" class="btn btn-primary">后视图</button>
         </div>
         </container>
-        <img id="texImage" src="http://localhost:9090/face_big.jpg" hidden/>
-        <img id="heixiuImage" src="http://localhost:9090/face_heixiu2.jpg" hidden/>
+        <img id="texImage" src="./face_big.jpg" hidden/>
+        <img id="heixiuImage" src="./face_heixiu2.jpg" hidden/>
 </body>
 
 </html>

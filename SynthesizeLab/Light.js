@@ -1,8 +1,8 @@
 //Light类  
 var Light = {
-  lightAmbient: vec4(0.2, 0.2, 0.2, 1.0), //环境光参数
-  lightDiffuse: vec4(0.3, 0.3, 0.3, 1.0), //散射光参数
-  lightSpecular: vec4(0.3, 0.3, 0.3, 1.0), //镜面光参数
+  lightAmbient: vec4(1.0, 1.0, 1.0, 1.0), //环境光参数
+  lightDiffuse: vec4(1.0, 1.0, 1.0, 1.0), //散射光参数
+  lightSpecular: vec4(0.5, 0.5, 0.5, 1.0), //镜面光参数
   lightPosition: vec3(0.0, 2.0, 2.0), //光源位置
   FORWARD_STEP: 0.2, //平移步长
   RotateAngle: 0, //旋转角度
