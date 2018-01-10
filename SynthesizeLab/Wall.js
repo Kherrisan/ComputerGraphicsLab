@@ -17,10 +17,10 @@ var Wall = {
   build: () => {
     //通过调用Geometry.js中的generator函数计算wall的顶点和法向量的坐标并存入对应数组
     var verticesAndNormals = cuboid_generator({
-      bottom_leftup: vec3(-10, 0, -10),
-      bottom_leftdown: vec3(-10, 0, -9),
-      bottom_rightup: vec3(10, 0, -10),
-      bottom_rightdown: vec3(10, 0, -9),
+      bottom_leftup: vec3(-10, 0, -9),
+      bottom_leftdown: vec3(-10, 0, -8),
+      bottom_rightup: vec3(10, 0, -9),
+      bottom_rightdown: vec3(10, 0, -8),
       height: 5
     });
     //保存顶点个数，用于drawArray
