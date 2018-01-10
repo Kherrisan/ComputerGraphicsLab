@@ -266,6 +266,7 @@ function taper_generator(shape_data, texture_generator) {
       b * Math.sin((theta + 1) / 180 * Math.PI) + cbias
     );
     var normal = vec3(cross(subtract(p2, p1), subtract(p3, p1)));
+    normal = subtract(vec3(), normal);
     if (texture_generator != undefined) {
       var t1 = texture_generator(theta, 0, 512);
       textures.push(t1);
@@ -456,7 +457,7 @@ function get_rectangle_normals(vertices) {
   var t2 = subtract(vertices[1], vertices[3]);
 
   var normal = vec3(cross(t1, t2));
-  normal = subtract(vec3(), normal);
+  // normal = subtract(vec3(), normal);
 
   return [normal, normal, normal, normal, normal, normal];
 }

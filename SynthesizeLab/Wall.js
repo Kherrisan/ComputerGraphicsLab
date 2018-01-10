@@ -1,7 +1,7 @@
 var Wall = {
   //材质属性
-  materialAmbient: vec4(0.3, 0.3, 0.3, 1.0), //对象的材质环境光参数
-  materialDiffuse: vec4(0.3, 0.3, 0.3, 1.0), //对象的材质散射光参数
+  materialAmbient: vec4(0.1, 0.1, 0.1, 1.0), //对象的材质环境光参数
+  materialDiffuse: vec4(0.2, 0.2, 0.2, 1.0), //对象的材质散射光参数
   materialSpecular: vec4(0.5, 0.5, 0.5, 1.0), //对象的材质镜面光参数
   shininess: 1.0, //对象的高光度
   vbo: null, //存放顶点坐标的缓存区 vertices buffer object
@@ -17,11 +17,11 @@ var Wall = {
   build: () => {
     //通过调用Geometry.js中的generator函数计算wall的顶点和法向量的坐标并存入对应数组
     var verticesAndNormals = cuboid_generator({
-      bottom_leftup: vec3(-2, 0, -5),
-      bottom_leftdown: vec3(-2, 0, -6),
-      bottom_rightup: vec3(2, 0, -5),
-      bottom_rightdown: vec3(2, 0, -6),
-      height: 2
+      bottom_leftup: vec3(-10, 0, -10),
+      bottom_leftdown: vec3(-10, 0, -9),
+      bottom_rightup: vec3(10, 0, -10),
+      bottom_rightdown: vec3(10, 0, -9),
+      height: 5
     });
     //保存顶点个数，用于drawArray
     Wall.vertexNum = verticesAndNormals.vertices.length;
