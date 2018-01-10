@@ -101,6 +101,6 @@
 
 ### 实验最终效果
 
-![实验成果图](https://github.com/Dokyme/ComputerGraphicsLab/raw/Lab5/SynthesizeLab/final.png)
+![实验成果图](https://github.com/Dokyme/ComputerGraphicsLab/raw/Lab5/SynthesizeLab/final.jpg)
 
 访问链接(https://www.dokyme.cn/Lab/main.html)
