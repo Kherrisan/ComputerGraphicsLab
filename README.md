@@ -58,7 +58,7 @@
 
 ### 实验最终效果
 
-链接(https://www.dokyme.cn/Lab3/main.html)
+访问链接(https://www.dokyme.cn/Lab3/main.html)
 
 ## 实验四
 
@@ -75,7 +75,7 @@
 
 ### 实验最终效果
 
-链接(https://www.dokyme.cn/Lab4/main.html)
+访问链接(https://www.dokyme.cn/Lab4/main.html)
 
 ## 实验五
 
@@ -102,3 +102,5 @@
 ### 实验最终效果
 
 ![实验成果图](https://github.com/Dokyme/ComputerGraphicsLab/raw/Lab5/SynthesizeLab/final.png)
+
+访问链接(https://www.dokyme.cn/Lab/main.html)
