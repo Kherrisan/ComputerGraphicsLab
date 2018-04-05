@@ -1,5 +1,10 @@
 # ComputerGraphicsLab——计算机图形学实验（WebGL）
 
+lines:
+
+Javascript 2402
+HTML 131
+
 ## 实验一
 
 ### 主题
