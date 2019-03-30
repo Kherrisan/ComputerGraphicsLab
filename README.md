@@ -63,7 +63,7 @@ HTML 131
 
 ### 实验最终效果
 
-访问链接(https://www.dokyme.cn/Lab3/main.html)
+访问链接(https://www.dokyme.cn/CGLab/Lab3/main.html)
 
 ## 实验四
 
@@ -80,7 +80,7 @@ HTML 131
 
 ### 实验最终效果
 
-访问链接(https://www.dokyme.cn/Lab4/main.html)
+访问链接(https://www.dokyme.cn/CGLab/Lab4/main.html)
 
 ## 实验五
 
@@ -108,4 +108,4 @@ HTML 131
 
 ![实验成果图](https://github.com/Dokyme/ComputerGraphicsLab/blob/master/SynthesizeLab/final.jpg?raw=true)
 
-访问链接(https://www.dokyme.cn/Lab/main.html)
+访问链接(https://www.dokyme.cn/CGLab/SynthesizeLab/main.html)
