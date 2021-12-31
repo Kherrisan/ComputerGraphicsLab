@@ -9,7 +9,7 @@ function Camera() {
   this.dollystep = 0;
 }
 
-Camera.prototype.update = function() {
+Camera.prototype.update = function () {
   console.log(
     "Camera update " + this.elevation + "," + this.azimuth + "," + this.position
   );
@@ -25,12 +25,12 @@ Camera.prototype.update = function() {
   }
 };
 
-Camera.prototype.getViewTransform = function() {
+Camera.prototype.getViewMatrix = function () {
   //把相机的位置姿态矩阵取逆矩阵，就是模型视图矩阵。
   return inverse4(this.matrix);
 };
 
-Camera.prototype.changeElevation = function(el) {
+Camera.prototype.changeElevation = function (el) {
   //改变相机的仰角，el是变化量，单位为度。
   console.log("changeElevation " + el);
   this.elevation += el;
@@ -40,7 +40,7 @@ Camera.prototype.changeElevation = function(el) {
   this.update();
 };
 
-Camera.prototype.changeAzimuth = function(az) {
+Camera.prototype.changeAzimuth = function (az) {
   //改变相机的方向角，az是变化量，单位为度。
   console.log("changeElevation " + az);
   this.azimuth += az;
@@ -50,22 +50,22 @@ Camera.prototype.changeAzimuth = function(az) {
   this.update();
 };
 
-Camera.prototype.setLocation = function(x, y, z) {
+Camera.prototype.setLocation = function (x, y, z) {
   this.position = vec3(x, y, z);
   this.update();
 };
 
-Camera.prototype.dollyin = function() {
+Camera.prototype.dollyin = function () {
   this.dollystep++;
   this.dolly(this.dollystep);
 };
 
-Camera.prototype.dollyout = function() {
+Camera.prototype.dollyout = function () {
   this.dollystep--;
   this.dolly(this.dollystep);
 };
 
-Camera.prototype.dolly = function(cstep) {
+Camera.prototype.dolly = function (cstep) {
   var step = cstep - this.steps;
   var newPosition = vec3();
   newPosition[0] = this.position[0];

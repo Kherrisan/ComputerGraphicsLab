@@ -16,6 +16,7 @@ Heixiu.prototype.texture_coordinate = function (x, y, z, height, width) {
 
 //heixiu类
 function Heixiu() {
+  this.name = "heixiu";
   this.materialAmbient = vec4(0.1, 0.1, 0.1, 1.0);//对象的材质环境光参数
   this.materialDiffuse = vec4(0.2, 0.2, 0.2, 1.0);//对象的材质散射光参数
   this.materialSpecular = vec4(0.01, 0.01, 0.01, 1.0);//对象的材质镜面光参数
@@ -35,7 +36,7 @@ function Heixiu() {
   this.vertexNum = 0;//顶点的数量
   this.transformMatrix = null;//变换矩阵
   this.onChange = null;//激活响应函数的属性
-} 
+}
 
 /*
   heixiu对象生成的时候，用于设置黑修对象的位置 
@@ -71,7 +72,7 @@ Heixiu.prototype.build = function () {
   var shape_data = {
     origin: vec3(0, 0, 0),
 
-    axis_length: vec3(this.size * 5, this.size * 4, this.size * 4), 
+    axis_length: vec3(this.size * 5, this.size * 4, this.size * 4),
     angle_range_vertical: vec2(0, 180),
     angle_range_horizontal: vec2(0, 360),
 

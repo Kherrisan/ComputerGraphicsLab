@@ -1,4 +1,5 @@
 var Wall = {
+  name: "wall",
   //材质属性
   materialAmbient: vec4(0.1, 0.1, 0.1, 1.0), //对象的材质环境光参数
   materialDiffuse: vec4(0.2, 0.2, 0.2, 1.0), //对象的材质散射光参数

@@ -15,23 +15,21 @@
         varying vec2 vTextureCoord;
 
         uniform mat4 uPMatrix;
-        uniform mat3 uNMMatrix;
         uniform mat4 uMVMatrix;
-        uniform mat4 uTMatrix;
         uniform bool uPerVertexColor;
         uniform bool uUseTexture;
+        uniform mat3 uNMatrix;
         attribute vec3 aVertexPosition;
         attribute vec2 aTextureCoord;
 
         void main()
         {
-            vec4 pos = uMVMatrix * uTMatrix * vec4(aVertexPosition, 1.0);
-            gl_Position = uPMatrix * pos;
-            if(uLightPosition.w == 0.0) L=normalize(uLightPosition.xyz);
-            else L = normalize(uLightPosition.xyz - pos.xyz);
-            E = -normalize(pos.xyz);
-            //N = aVertexNormal.xyz;
-            N = normalize(uNMMatrix * aVertexNormal.xyz);
+            vec4 pos = (uMVMatrix * vec4(aVertexPosition, 1.0));
+            gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+            L = normalize(uLightPosition.xyz - pos.xyz);
+            E = -pos.xyz;
+            N = normalize(uNMatrix * aVertexNormal.xyz);
+            //N = normalize((uMVMatrix * aVertexNormal).xyz);
             if(uUseTexture) {
                 vTextureCoord = aTextureCoord;
             }
@@ -39,7 +37,6 @@
     </script>
 
     <script id="fragment-shader" type="x-shader/x-fragment">
-
         precision mediump float;
         uniform vec4 uAmbientProduct;
         uniform vec4 uDiffuseProduct;
@@ -56,21 +53,21 @@
             vec3 H = normalize( L + E );
             vec4 ambient = uAmbientProduct;
         
-            float Kd = max( dot(L, N), 0.0 );
-            vec4  diffuse = Kd * uDiffuseProduct;
+            float Kd = max(dot(L, N), 0.0);
+            vec4  diffuse =  Kd * uDiffuseProduct;
         
-            float Ks = pow( max(dot(N, H), 0.0), uShininess );
+            float Ks = pow(max(dot(N, H), 0.0), uShininess);
             vec4  specular = Ks * uSpecularProduct;
             
             if( dot(L, N) < 0.0 ) 
             {
                 specular = vec4(0.0, 0.0, 0.0, 1.0);
             }
-            fColor = ambient+diffuse+specular;
+            fColor = ambient + diffuse + specular;
             fColor.a = 1.0;
             
             if(uUseTexture){
-                gl_FragColor = 0.8*fColor + 0.9*texture2D(uTexture_0_xiaohei, vTextureCoord);
+                gl_FragColor = 0.5*fColor + 0.5*texture2D(uTexture_0_xiaohei, vTextureCoord);
             }else{
                 gl_FragColor = fColor;
             }
@@ -85,7 +82,7 @@
     <script type="text/javascript" src="./Camera.js"></script>
     <script type="text/javascript" src="./CameraInteractor.js"></script>
     <script type="text/javascript" src="./Floor.js"></script>
-    <script type="text/javascript" src="./Geometry.js"></script> 
+    <script type="text/javascript" src="./Geometry.js"></script>
     <script type="text/javascript" src="./Scene.js"></script>
     <script type="text/javascript" src="./Wall.js"></script>
     <script type="text/javascript" src="./Xiaohei.js"></script>
@@ -143,8 +140,8 @@
             <button type="button" id="back_look" class="btn btn-primary">后视图</button>
         </div>
         </container>
-        <img id="texImage" src="./face_big.jpg" hidden/>
-        <img id="heixiuImage" src="./face_heixiu2.jpg" hidden/>
+        <img id="texImage" src="./face_big.jpg" hidden />
+        <img id="heixiuImage" src="./face_heixiu2.jpg" hidden />
 </body>
 
 </html>

@@ -1,9 +1,10 @@
 //Light类  
 var Light = {
-  lightAmbient: vec4(1.0, 1.0, 1.0, 1.0), //环境光参数
-  lightDiffuse: vec4(1.0, 1.0, 1.0, 1.0), //散射光参数
-  lightSpecular: vec4(0.5, 0.5, 0.5, 1.0), //镜面光参数
-  lightPosition: vec3(0.0, 2.0, 2.0), //光源位置
+  name: "light",
+  lightAmbient: vec4(0.2, 0.2, 0.2, 1.0), //环境光参数
+  lightDiffuse: vec4(0.5, 0.5, 0.5, 1.0), //散射光参数
+  lightSpecular: vec4(1.0, 1.0, 1.0, 1.0), //镜面光参数
+  lightPosition: vec4(0.0, 2.0, 2.0, 1.0), //光源位置
   FORWARD_STEP: 0.2, //平移步长
   RotateAngle: 0, //旋转角度
   vbo: null, //存放顶点坐标的缓存区 vertices buffer object
@@ -36,7 +37,7 @@ var Light = {
         Light.size * 0.2,
         Light.size * 0.2,
         Light.size * 0.2
-      ), 
+      ),
       angle_range_vertical: vec2(0, 180),
       angle_range_horizontal: vec2(0, 360),
     };
@@ -45,7 +46,7 @@ var Light = {
     vertices = vertices.concat(light_vertices.vertices);
     normals = normals.concat(light_vertices.normals);
 
-    
+
     //保存顶点个数，用于drawArray
     Light.vertexNum = vertices.length;
     //创建存放顶点坐标的buffer，并传入数据vertices。
@@ -61,6 +62,23 @@ var Light = {
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
   },
+
+  absolutePosition: function () {
+    var RE = scalem(Light.size, Light.size, Light.size);
+    var T = translate(
+      Light.lightPosition[0],
+      Light.lightPosition[1],
+      Light.lightPosition[2]
+    );
+    var R = rotateY(Light.RotateAngle);
+    return mult(mult(T, mult(R, RE)),
+      vec4(
+        Light.lightPosition[0],
+        Light.lightPosition[1],
+        Light.lightPosition[2],
+        1.0));
+  },
+
   /*
     Light对象生成和变换的时候，用于更新Light变换矩阵的函数
   */

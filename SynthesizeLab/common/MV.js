@@ -238,13 +238,13 @@ function subtract(u, v) {
   if (u.matrix && v.matrix) {
     if (u.length != v.length) {
       throw "subtract(): trying to subtract matrices" +
-        " of different dimensions";
+      " of different dimensions";
     }
 
     for (var i = 0; i < u.length; ++i) {
       if (u[i].length != v[i].length) {
         throw "subtract(): trying to subtact matrices" +
-          " of different dimensions";
+        " of different dimensions";
       }
       result.push([]);
       for (var j = 0; j < u[i].length; ++j) {

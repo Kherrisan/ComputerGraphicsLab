@@ -1,4 +1,5 @@
 var Floor = {
+  name: "floor",
   lines: 50, //行数
   halfWidth: 50, //半宽
   wireframe: true, //线框画法
@@ -24,7 +25,7 @@ var Floor = {
       v[6 * iline] = -Floor.halfWidth;
       v[6 * iline + 1] = 0;
       v[6 * iline + 2] = -Floor.halfWidth + iline * delta;
-        
+
       //右侧顶点坐标，与左侧相连形成水平线
       v[6 * iline + 3] = Floor.halfWidth;
       v[6 * iline + 4] = 0;
@@ -54,7 +55,7 @@ var Floor = {
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
     //存入索引数量到indicesNum
-    Floor.indicesNum=i.length;
+    Floor.indicesNum = i.length;
 
     Floor.ibo = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, Floor.ibo);

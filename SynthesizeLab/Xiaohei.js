@@ -16,11 +16,12 @@ function texture_coordinate(x, y, z, height, width) {
 
 //这个文件定义了小黑对象，该对象持有小黑的一些位置和姿态属性，实现了小黑的动作变化，并拥有相关buffer。
 var Xiaohei = {
+  name: "xiaohei",
   //明暗材质属性
-  materialAmbient: vec4(0.1, 0.1, 0.1, 1.0),
-  materialDiffuse: vec4(0.2, 0.2, 0.2, 1.0),
-  materialSpecular: vec4(0.01, 0.01, 0.01, 1.0),
-  shininess: 1.0,//高光度
+  materialAmbient: vec4(1.0, 1.0, 1.0, 1.0),
+  materialDiffuse: vec4(1.0, 1.0, 1.0, 1.0),
+  materialSpecular: vec4(1.0, 1.0, 1.0, 1.0),
+  shininess: 10.0,//高光度
   texture: null,
   FORWARD_STEP: 0.2, //平移步长
   ROTATE_STEP: 5,
@@ -60,11 +61,11 @@ var Xiaohei = {
       angle_range_vertical: vec2(0, 180),
       angle_range_horizontal: vec2(0, 360),
 
-      ellipse_axis:vec2(0,0),
-      angle_range:vec2(0,360),
+      ellipse_axis: vec2(0, 0),
+      angle_range: vec2(0, 360),
 
-      height:0,
-      top_point:vec3(0,0,0), 
+      height: 0,
+      top_point: vec3(0, 0, 0),
     };
     //生成头部顶点坐标和法向量。它是一个椭球。需要纹理，所以传入texture_coordinate来计算纹理坐标。
     var head_vertices = ellipsoid_generator(shape_data, texture_coordinate);
@@ -244,7 +245,7 @@ var Xiaohei = {
     gl.bufferData(gl.ARRAY_BUFFER, flatten(textures), gl.STATIC_DRAW);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
   },
-  constructMatrix: function(matrix, vertices) {
+  constructMatrix: function (matrix, vertices) {
     //matrix是一个变换矩阵，vertices是一个顶点坐标的数组。
     //这个函数实现对vertices中每个顶点坐matrix变换。
     //这个函数的主要用途是把在原地生成的基本几何形体变换到身体某部分相对于身体的合适位置。
@@ -256,7 +257,7 @@ var Xiaohei = {
       vertices[i] = vec3(temp[0], temp[1], temp[2]);
     }
   },
-  updateTransformMatrix: function() {
+  updateTransformMatrix: function () {
     //更新整只小黑的变换矩阵。在App.js的App.draw的时候会用到这个矩阵，传递到顶点着色器的uTMatrix中。
     //先绕原点缩放，再绕y轴旋转，再平移，即可到达最终位置。
     var RE = scalem(Xiaohei.size, Xiaohei.size, Xiaohei.size);
@@ -268,7 +269,7 @@ var Xiaohei = {
     var R = rotateY(Xiaohei.RotateAngle);
     Xiaohei.transformMatrix = mult(T, mult(R, RE));
   },
-  rotateRight: function() {
+  rotateRight: function () {
     //整只小黑向右转的函数。
     Xiaohei.RotateAngle += Xiaohei.ROTATE_STEP;
     Xiaohei.updateTransformMatrix();
@@ -276,7 +277,7 @@ var Xiaohei = {
       Xiaohei.onChange();
     }
   },
-  rotateLeft: function() {
+  rotateLeft: function () {
     //整只小黑向左转的函数。
     Xiaohei.RotateAngle -= Xiaohei.ROTATE_STEP;
     Xiaohei.updateTransformMatrix();
@@ -284,7 +285,7 @@ var Xiaohei = {
       Xiaohei.onChange();
     }
   },
-  walkForward: function() {
+  walkForward: function () {
     //整只小黑向后退一步的函数。
     //后退修改的是小黑的位置，位置的变化量分解到x和z轴上（不考虑沿y轴的平移）。
     //这里做了一个正交分解。
@@ -297,7 +298,7 @@ var Xiaohei = {
       Xiaohei.onChange();
     }
   },
-  walkBackward: function() {
+  walkBackward: function () {
     //整只小黑向前走一步的函数。
     //前进修改的是小黑的位置，位置的变化量分解到x和z轴上（不考虑沿y轴的平移）。
     //这里也做了一个正交分解。
@@ -310,7 +311,7 @@ var Xiaohei = {
       Xiaohei.onChange();
     }
   },
-  shrink: function() {
+  shrink: function () {
     //整只小黑缩小的函数
     Xiaohei.size -= Xiaohei.RESIZE_STEP;
     Xiaohei.updateTransformMatrix();
@@ -318,7 +319,7 @@ var Xiaohei = {
       Xiaohei.onChange();
     }
   },
-  expand: function() {
+  expand: function () {
     //整只小黑变大的函数
     Xiaohei.size += Xiaohei.RESIZE_STEP;
     Xiaohei.updateTransformMatrix();

@@ -23,7 +23,7 @@ var aTextureCoord = null;
 
 //光照有关参数
 var aVertexNormal = null;
-var uNMMatrix = null;
+var uNMatrix = null;
 var uLightPosition = null;
 var uAmbientProduct = null;
 var uDiffuseProduct = null;
